@@ -39,7 +39,11 @@ spec:
       {{- end }}
     {{- end }}
   tls:
+    {{- if .Values.ingress.tlsSecret }}
+    secretName: {{ .Values.ingress.tlsSecret }}
+    {{- else }}
     secretName: {{ .Values.ingress.rootDomain | replace "." "-" }}-tls
+    {{- end }}
 {{- else if eq .Values.ingress.kind "IngressRouteTCP" -}}
 # ------------------------------
 # -- {{ include "app.name" $ | title }} IngressRouteTCP
@@ -79,6 +83,10 @@ spec:
       {{- end }}
     {{- end }}
   tls:
+    {{- if .Values.ingress.tlsSecret }}
+    secretName: {{ .Values.ingress.tlsSecret }}
+    {{- else }}
     secretName: {{ .Values.ingress.rootDomain | replace "." "-" }}-tls
+    {{- end }}
 {{- end -}}
 {{- end -}}

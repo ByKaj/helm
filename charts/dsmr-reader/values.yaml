@@ -262,6 +262,9 @@ ingress:
   # Attach middlewares to ingress route.
   middlewares:
   - secure-headers
+
+  # The TLS secretName for the certificate
+  tlsSecret: ""
   
   # Ingress annotations.
   annotations: {}
@@ -270,10 +273,10 @@ ingress:
 # -- Storage
 # -----------------------------------------------------------------------------
 # When mounting volumes to the pod, define the secret and namespace where the credentials are located. For now only needed for SMB.
-credentials:
-  smb:
-    secret: smb-credentials
-    namespace: default
+credentials: {}
+  # smb:
+  #   secret: smb-credentials
+  #   namespace: default
 
 # Additional volumes on the output Deployment definition.
 # Longhorn as storage required.
