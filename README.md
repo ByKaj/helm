@@ -28,7 +28,7 @@ helm install --dry-run <chart-name> bykaj/<chart-name>
 ```
 
 ## Prerequisites
-These charts are specific for an [K3s](https://k3s.io) environment with:
+These charts are specific for a [K3s](https://k3s.io) environment with:
 - [Longhorn](https://longhorn.io), for distributed block storage
 - [Cert-Manager](https://github.com/cert-manager/cert-manager), setup to generate wildcard Let's Encrypt certificates
 - [Reflector](https://github.com/emberstack/kubernetes-reflector), to mirror certificates to other namespaces
