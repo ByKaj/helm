@@ -1,0 +1,33 @@
+{{- if .Values.ingress.middlewares -}}
+# ------------------------------
+# -- {{ include "app.name" $ | title }} Middleware
+# ------------------------------
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: secure-headers
+  labels:
+    {{- include "app.labels" $ | nindent 4 }}
+spec:
+  headers:
+    accessControlAllowMethods:
+      - GET
+      - OPTIONS
+      - PUT
+    accessControlMaxAge: 100
+    hostsProxyHeaders:
+      - X-Forwarded-Host
+    browserXssFilter: true
+    contentTypeNosniff: true
+    forceSTSHeader: true
+    stsIncludeSubdomains: true
+    stsPreload: true
+    stsSeconds: 15552000
+    customFrameOptionsValue: SAMEORIGIN
+    customRequestHeaders:
+      X-Forwarded-Proto: https
+    customResponseHeaders:
+      X-Robots-Tag: none,noarchive,nosnippet,notranslate,noimageindex,
+    referrerPolicy: same-origin
+    permissionsPolicy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), vr=()
+{{- end -}}

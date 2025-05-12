@@ -1,0 +1,11 @@
+apiVersion: v2
+name: dsmr-reader
+version: 1.0.0
+description: DSMR-reader is an open-source application that reads, stores, and visualizes energy consumption data from smart meters supporting the Dutch Smart Meter Requirements (DSMR) protocol.
+type: application
+home: https://github.com/dsmrreader/dsmr-reader
+maintainers:
+  - name: ByKaj
+    url: https://github.com/ByKaj
+icon: https://avatars.githubusercontent.com/u/57727360
+appVersion: latest
