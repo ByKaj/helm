@@ -12,10 +12,14 @@ Make a local `values.yaml` file with the following content and change the values
 ```yaml
 containers:
   app:
-    # Your local timezone
+    # Your local timezone and the user/group ID's (default: "0")
     env:
     - name: TZ
       value: Europe/Amsterdam
+    - name: PUID
+      value: "0"
+    - name: PGID
+      value: "0"
 
     # The volume mounts inside the container
     volumeMounts:

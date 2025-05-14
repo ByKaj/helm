@@ -146,8 +146,8 @@ dnsConfig:
 
 # This is for setting up a service.
 # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
-service: {}
-  # type: ClusterIP
+service:
+  type: ClusterIP
 
 # This block is for setting up the Traefik ingress. 
 # Ref: https://doc.traefik.io/traefik/routing/providers/kubernetes-crd/#kind-ingressroutetcp
