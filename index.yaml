@@ -35,4 +35,22 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/dsmr-reader-1.0.0/dsmr-reader-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-12T23:04:54.991056106Z"
+  newt:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-14T13:18:38.32429656Z"
+    description: Newt is a user-space WireGuard tunnel client and TCP/UDP proxy designed
+      to securely expose private resources managed by Pangolin while simplifying tunnel
+      management and NAT configuration.
+    digest: aedbf71bf40dfac23ab2b02465deb6d482f7c1c8ccf66bdb977bea5bb0a1c3ae
+    home: https://github.com/fosrl/newt
+    icon: https://avatars.githubusercontent.com/u/183037913
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: newt
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/newt-1.0.0/newt-1.0.0.tgz
+    version: 1.0.0
+generated: "2025-05-14T13:18:38.324310085Z"
