@@ -56,6 +56,23 @@ entries:
   sonarr:
   - apiVersion: v2
     appVersion: latest
+    created: "2025-05-14T15:41:49.006268862Z"
+    description: Sonarr is a smart PVR (Personal Video Recorder) application that
+      automates the downloading and organization of TV shows from various sources
+      based on user-defined quality preferences and release schedules.
+    digest: 3ef59321cc0b80739282e1b073e89eb8ec9a6f1bd29a07ad253674a988815345
+    home: https://sonarr.tv
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/sonarr.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: sonarr
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/sonarr-1.0.1/sonarr-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: latest
     created: "2025-05-14T15:17:55.576393838Z"
     description: Sonarr is a smart PVR (Personal Video Recorder) application that
       automates the downloading and organization of TV shows from various sources
@@ -71,4 +88,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/sonarr-1.0.0/sonarr-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-14T15:17:55.57641095Z"
+generated: "2025-05-14T15:41:49.006280133Z"
