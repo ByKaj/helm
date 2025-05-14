@@ -1,3 +1,4 @@
+{{- if .Values.service -}}
 # ------------------------------
 # -- {{ include "app.name" $ | title }} Service
 # -- Name: {{ include "app.fullname" . }}-svc
@@ -23,3 +24,4 @@ spec:
     {{- end }}
   selector:
     {{- include "app.selectorLabels" . | nindent 4 }}
+{{- end -}}

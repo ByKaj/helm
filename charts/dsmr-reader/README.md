@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://avatars.githubusercontent.com/u/57727360" height="120" alt="DSMR-reader logo">
+    <img src="https://cdn.jsdelivr.net/gh/selfhst/icons/png/dsmr-reader.png" height="120" alt="DSMR-reader logo">
 </p>
 
 # DSMR-reader
@@ -21,9 +21,16 @@ containers:
         value: dsmrreader
       - name: POSTGRES_PASSWORD
         value: Pl3@s3!Ch@ng3M3
+    # The volume mounts inside the container
+    volumeMounts:
+    - mountPath: /var/lib/postgresql/data
+      readOnly: false
+      name: config
+      subPath: postgresql
 
   app:
     # Your local timezone and the operation mode
+    # Ref: https://github.com/xirixiz/dsmr-reader-docker#dsmr-datalogger-related
     env:
       - name: DJANGO_TIME_ZONE
         value: Europe/Amsterdam
@@ -39,12 +46,21 @@ containers:
 ingress:
   # Your domain name
   rootDomain: domain.tld
-  # The subdomain of the domain (e.g. `dsmr`)
-  # @default -- `<app.name>`
+  # The subdomain of the domain (e.g. `my-app`)
+  # @default -- `<app.fullname>`
   subDomainOverride: ""
   # The secret containing the wildcard certificate
   # @default -- `domain-tld-tls`
   tlsSecret: ""
+
+# Add the persistent volumes (Longhorn) to the pod
+volumes:
+- name: config
+  className: longhorn
+  accessModes: 
+  - ReadWriteOnce
+  storage: 3Gi
+  source: ""
 ```
 
 Finally, install the chart:

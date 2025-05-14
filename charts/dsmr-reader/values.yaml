@@ -29,7 +29,7 @@ containers:
     image:
       repository: postgres
       # This sets the pull policy for images.
-      pullPolicy: IfNotPresent
+      pullPolicy: Always
       # Overrides the image tag. Default is the chart appVersion.
       tag: "16-alpine"
 
@@ -115,7 +115,7 @@ containers:
     image:
       repository: ghcr.io/xirixiz/dsmr-reader-docker
       # This sets the pull policy for images.
-      pullPolicy: IfNotPresent
+      pullPolicy: Always
       # Overrides the image tag. Default is the chart appVersion.
       tag: ""
 
@@ -248,7 +248,7 @@ ingress:
   kind: IngressRoute
 
   # Root domain (<domain>.<tld>).
-  rootDomain: example.local
+  rootDomain: domain.tld
 
   # Override the subdomain.
   # @default -- '""' (See [values.yaml])
@@ -298,8 +298,7 @@ volumes:
 # -- Scheduling, Preemption and Eviction
 # -----------------------------------------------------------------------------
 # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
-nodeSelector:
-  worker: "true"
+nodeSelector: {}
 
 # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
 tolerations: []
