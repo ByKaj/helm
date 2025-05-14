@@ -3,6 +3,23 @@ entries:
   dsmr-reader:
   - apiVersion: v2
     appVersion: latest
+    created: "2025-05-14T17:20:51.416938258Z"
+    description: DSMR-reader is an open-source application that reads, stores, and
+      visualizes energy consumption data from smart meters supporting the Dutch Smart
+      Meter Requirements (DSMR) protocol.
+    digest: 11711675a2a35b2ba0c5bd1c9409088ef4e97485f6e993c1ba5acdb0d165ee22
+    home: https://github.com/dsmrreader/dsmr-reader
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/dsmr-reader.png
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: dsmr-reader
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/dsmr-reader-1.0.2/dsmr-reader-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
+    appVersion: latest
     created: "2025-05-12T23:04:54.99104777Z"
     description: DSMR-reader is an open-source application that reads, stores, and
       visualizes energy consumption data from smart meters supporting the Dutch Smart
@@ -19,6 +36,23 @@ entries:
     - https://github.com/ByKaj/helm/releases/download/dsmr-reader-1.0.1/dsmr-reader-1.0.1.tgz
     version: 1.0.1
   newt:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-14T17:20:51.550895112Z"
+    description: Newt is a user-space WireGuard tunnel client and TCP/UDP proxy designed
+      to securely expose private resources managed by Pangolin while simplifying tunnel
+      management and NAT configuration.
+    digest: 633fa4a338edc3fe105d4588708bc5c0c22e824c8bf2669beaed2aaae52b87b0
+    home: https://github.com/fosrl/newt
+    icon: https://avatars.githubusercontent.com/u/183037913
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: newt
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/newt-1.0.2/newt-1.0.2.tgz
+    version: 1.0.2
   - apiVersion: v2
     appVersion: latest
     created: "2025-05-14T15:17:55.395241924Z"
@@ -56,6 +90,23 @@ entries:
   sonarr:
   - apiVersion: v2
     appVersion: latest
+    created: "2025-05-14T17:20:51.681556955Z"
+    description: Sonarr is a smart PVR (Personal Video Recorder) application that
+      automates the downloading and organization of TV shows from various sources
+      based on user-defined quality preferences and release schedules.
+    digest: f0779ddca3fac2a15c889eedf7395ab73b5da9cb7789dc269ea429c2badee0f6
+    home: https://sonarr.tv
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/sonarr.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: sonarr
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/sonarr-1.0.2/sonarr-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
+    appVersion: latest
     created: "2025-05-14T15:41:49.006268862Z"
     description: Sonarr is a smart PVR (Personal Video Recorder) application that
       automates the downloading and organization of TV shows from various sources
@@ -88,4 +139,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/sonarr-1.0.0/sonarr-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-14T15:41:49.006280133Z"
+generated: "2025-05-14T17:20:51.681577734Z"
