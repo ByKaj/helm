@@ -1,0 +1,52 @@
+{{- if .Values.volumes -}}
+{{- range .Values.volumes }}
+{{- $name := "" -}}
+{{- if eq (toString .className) "longhorn" -}}
+  {{- $name = ((cat (include "app.fullname" $) "-" .name "-lgn") | nospace) -}}
+{{- else if eq (toString .className) "smb" -}}
+  {{- $name = ((cat (include "app.fullname" $) "-" .name "-smb") | nospace) -}}
+{{- end -}}
+---
+# ------------------------------
+# -- {{ include "app.name" $ | title }} PV
+# -- Name: {{ $name }}-pv
+# ------------------------------
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ $name }}-pv
+  labels:
+    {{- include "app.labels" $ | nindent 4 }}
+spec:
+  capacity:
+    storage: {{ .storage }}
+  volumeMode: Filesystem
+  {{- with .accessModes }}
+  accessModes:
+    {{- range . }}
+    - {{ . }}
+    {{- end }}
+  {{- end }}
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: {{ .className }}
+  {{- if eq (toString .className) "longhorn" }}
+  csi:
+    driver: driver.longhorn.io
+    readOnly: false
+    fsType: ext4
+    volumeAttributes:
+      numberOfReplicas: '3'
+      staleReplicaTimeout: '2880'
+  {{- else if eq (toString .className) "smb" }}
+  csi:
+    driver: smb.csi.k8s.io
+    readOnly: false
+    volumeAttributes:
+      source: {{ .source }}
+    nodeStageSecretRef:
+      name: {{ required ".credentials.smb.secret not found: SMB credentials secret not defined" $.Values.credentials.smb.secret }}
+      namespace: {{ required ".credentials.smb.namespace not found: SMB credentials namespace not defined" $.Values.credentials.smb.namespace }}
+  {{- end }}
+    volumeHandle: {{ include "app.name" $ }}-{{ .name }}
+{{ end -}}
+{{- end -}}

@@ -1,0 +1,11 @@
+apiVersion: v2
+name: newt
+version: 1.0.0
+description: Newt is a user-space WireGuard tunnel client and TCP/UDP proxy designed to securely expose private resources managed by Pangolin while simplifying tunnel management and NAT configuration.
+type: application
+home: https://github.com/fosrl/newt
+maintainers:
+  - name: ByKaj
+    url: https://github.com/ByKaj
+icon: https://avatars.githubusercontent.com/u/183037913
+appVersion: latest
