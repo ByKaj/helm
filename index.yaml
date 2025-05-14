@@ -21,6 +21,23 @@ entries:
   newt:
   - apiVersion: v2
     appVersion: latest
+    created: "2025-05-14T15:17:55.395241924Z"
+    description: Newt is a user-space WireGuard tunnel client and TCP/UDP proxy designed
+      to securely expose private resources managed by Pangolin while simplifying tunnel
+      management and NAT configuration.
+    digest: fcf2b2e80d2f2c26c3c58723c5efb9f1a59ae74d6fefca2a6ac955c80b882f63
+    home: https://github.com/fosrl/newt
+    icon: https://avatars.githubusercontent.com/u/183037913
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: newt
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/newt-1.0.1/newt-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: latest
     created: "2025-05-14T13:18:38.32429656Z"
     description: Newt is a user-space WireGuard tunnel client and TCP/UDP proxy designed
       to securely expose private resources managed by Pangolin while simplifying tunnel
@@ -36,4 +53,22 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/newt-1.0.0/newt-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-14T13:18:38.324310085Z"
+  sonarr:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-14T15:17:55.576393838Z"
+    description: Sonarr is a smart PVR (Personal Video Recorder) application that
+      automates the downloading and organization of TV shows from various sources
+      based on user-defined quality preferences and release schedules.
+    digest: 49e71bcb98601f073251e642408eda18b1f944e37def08351225e6ab18411c3e
+    home: https://sonarr.tv
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/sonarr.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: sonarr
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/sonarr-1.0.0/sonarr-1.0.0.tgz
+    version: 1.0.0
+generated: "2025-05-14T15:17:55.57641095Z"
