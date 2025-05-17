@@ -87,6 +87,24 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/newt-1.0.0/newt-1.0.0.tgz
     version: 1.0.0
+  nutify:
+  - apiVersion: v2
+    appVersion: amd64-latest
+    created: "2025-05-17T14:25:52.120904564Z"
+    description: Nutify is a comprehensive UPS monitoring system that provides real-time
+      insights into UPS health and performance through a user-friendly web interface,
+      detailed reports, and interactive charts.
+    digest: baa478343f780f90690b94e2eb585f00946d0f59ff451445964c92baf06cdd27
+    home: https://github.com/DartSteven/Nutify
+    icon: https://github.com/DartSteven/Nutify/blob/main/pic/Nutify-Logo.png
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: nutify
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/nutify-1.0.0/nutify-1.0.0.tgz
+    version: 1.0.0
   sonarr:
   - apiVersion: v2
     appVersion: latest
@@ -139,4 +157,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/sonarr-1.0.0/sonarr-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-14T17:20:51.681577734Z"
+generated: "2025-05-17T14:25:52.120927016Z"
