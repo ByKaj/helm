@@ -1,0 +1,11 @@
+apiVersion: v2
+name: nutify
+version: 1.0.0
+description: Nutify is a comprehensive UPS monitoring system that provides real-time insights into UPS health and performance through a user-friendly web interface, detailed reports, and interactive charts.
+type: application
+home: https://github.com/DartSteven/Nutify
+maintainers:
+  - name: ByKaj
+    url: https://github.com/ByKaj
+icon: https://github.com/DartSteven/Nutify/blob/main/pic/Nutify-Logo.png
+appVersion: "amd64-latest"
