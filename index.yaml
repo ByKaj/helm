@@ -202,6 +202,26 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/prowlarr-1.0.0/prowlarr-1.0.0.tgz
     version: 1.0.0
+  radarr:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-18T16:17:14.051208358Z"
+    description: Radarr is an automated movie collection manager that monitors for
+      new releases, downloads them automatically, and organizes your media library.
+      It integrates with various download clients and media servers to provide a seamless
+      movie collection experience with customizable quality profiles and metadata
+      management.
+    digest: dd1597f3273b334e78af8ec71bf75134c686e31d6de353ca40a4afe852612653
+    home: https://radarr.video
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/radarr.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: radarr
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/radarr-1.0.0/radarr-1.0.0.tgz
+    version: 1.0.0
   sonarr:
   - apiVersion: v2
     appVersion: latest
@@ -271,4 +291,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/sonarr-1.0.0/sonarr-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-18T16:02:19.73883303Z"
+generated: "2025-05-18T16:17:14.051226503Z"
