@@ -54,6 +54,26 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/dsmr-reader-1.0.1/dsmr-reader-1.0.1.tgz
     version: 1.0.1
+  jellyseerr:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-18T17:08:32.879444657Z"
+    description: Jellyseerr is a content request and management system for Plex, Jellyfin
+      and Emby media servers that allows users to easily request new movies and TV
+      shows. It integrates with Radarr and Sonarr to automatically add approved requests
+      to your download queue, creating a seamless request-to-watch experience for
+      your media server users.
+    digest: b652ee6123fa47e881912f1ddea3b2566798bf51445b087136242e4d18005eb7
+    home: https://docs.jellyseerr.dev
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/jellyseerr.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: jellyseerr
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/jellyseerr-1.0.0/jellyseerr-1.0.0.tgz
+    version: 1.0.0
   linkwarden:
   - apiVersion: v2
     appVersion: latest
@@ -329,4 +349,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/sonarr-1.0.0/sonarr-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-18T16:45:38.550194382Z"
+generated: "2025-05-18T17:08:32.879470825Z"
