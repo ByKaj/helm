@@ -3,6 +3,24 @@ entries:
   bazarr:
   - apiVersion: v2
     appVersion: latest
+    created: "2025-05-18T18:23:31.954490322Z"
+    description: Bazarr is a companion application to Sonarr and Radarr that automatically
+      manages and downloads subtitles for your movies and TV shows. It integrates
+      with various subtitle providers to find and match the best subtitles for your
+      media library.
+    digest: 548f67c66755351aa4d032ecdce04083adf1cd76fc977bf447bc9a471d18ab19
+    home: https://www.bazarr.media
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/bazarr.png
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: bazarr
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/bazarr-1.0.1/bazarr-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: latest
     created: "2025-05-18T13:02:52.564433017Z"
     description: Bazarr is a companion application to Sonarr and Radarr that automatically
       manages and downloads subtitles for your movies and TV shows. It integrates
@@ -20,6 +38,23 @@ entries:
     - https://github.com/ByKaj/helm/releases/download/bazarr-1.0.0/bazarr-1.0.0.tgz
     version: 1.0.0
   dsmr-reader:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-18T18:23:32.046623375Z"
+    description: DSMR-reader is an open-source application that reads, stores, and
+      visualizes energy consumption data from smart meters supporting the Dutch Smart
+      Meter Requirements (DSMR) protocol.
+    digest: 34c41ae4197deaf130230defdc7090d53187679f06f8a1156c64cba12a3640a7
+    home: https://github.com/dsmrreader/dsmr-reader
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/dsmr-reader.png
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: dsmr-reader
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/dsmr-reader-1.0.3/dsmr-reader-1.0.3.tgz
+    version: 1.0.3
   - apiVersion: v2
     appVersion: latest
     created: "2025-05-14T17:20:51.416938258Z"
@@ -57,6 +92,25 @@ entries:
   jellyseerr:
   - apiVersion: v2
     appVersion: latest
+    created: "2025-05-18T18:23:32.144203605Z"
+    description: Jellyseerr is a content request and management system for Plex, Jellyfin
+      and Emby media servers that allows users to easily request new movies and TV
+      shows. It integrates with Radarr and Sonarr to automatically add approved requests
+      to your download queue, creating a seamless request-to-watch experience for
+      your media server users.
+    digest: 142c0a4c5635b10b22fcb3bdef4378d3ca5ac980b15713081fdb5b201d30949f
+    home: https://docs.jellyseerr.dev
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/jellyseerr.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: jellyseerr
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/jellyseerr-1.0.1/jellyseerr-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: latest
     created: "2025-05-18T17:08:32.879444657Z"
     description: Jellyseerr is a content request and management system for Plex, Jellyfin
       and Emby media servers that allows users to easily request new movies and TV
@@ -75,6 +129,24 @@ entries:
     - https://github.com/ByKaj/helm/releases/download/jellyseerr-1.0.0/jellyseerr-1.0.0.tgz
     version: 1.0.0
   linkwarden:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-18T18:23:32.22881817Z"
+    description: Linkwarden is a self-hosted bookmark and link management solution
+      designed to help you organize, archive, and share web content. It allows you
+      to categorize links into collections, add tags and notes, and create a searchable
+      personal knowledge base of web resources that you can access from anywhere.
+    digest: 187d98cf7b5065a3153fb4cba25e45139f332dc21b5b3c4053401f2e89b317a5
+    home: https://linkwarden.app
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/linkwarden.png
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: linkwarden
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/linkwarden-1.0.1/linkwarden-1.0.1.tgz
+    version: 1.0.1
   - apiVersion: v2
     appVersion: latest
     created: "2025-05-18T14:05:13.078811831Z"
@@ -96,6 +168,24 @@ entries:
   mosquitto:
   - apiVersion: v2
     appVersion: latest
+    created: "2025-05-18T18:23:32.310742985Z"
+    description: Mosquitto is a lightweight open-source message broker that implements
+      the MQTT protocol, enabling efficient machine-to-machine messaging for Internet
+      of Things devices and applications. It provides a simple way to exchange messages
+      between connected devices with minimal network bandwidth and resource requirements.
+    digest: 314c68fdd93535526443ad587082751433c68977d2525d9cb43fe18bebe3a3f0
+    home: https://mosquitto.org
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/mosquitto.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: mosquitto
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/mosquitto-1.0.1/mosquitto-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: latest
     created: "2025-05-18T14:34:15.358395547Z"
     description: Mosquitto is a lightweight open-source message broker that implements
       the MQTT protocol, enabling efficient machine-to-machine messaging for Internet
@@ -113,6 +203,23 @@ entries:
     - https://github.com/ByKaj/helm/releases/download/mosquitto-1.0.0/mosquitto-1.0.0.tgz
     version: 1.0.0
   newt:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-18T18:23:32.399835727Z"
+    description: Newt is a user-space WireGuard tunnel client and TCP/UDP proxy designed
+      to securely expose private resources managed by Pangolin while simplifying tunnel
+      management and NAT configuration.
+    digest: e20e45c0d52c9010cb149da4baa477eb16b3e94aab9fcd6f7c6330fa56fc436f
+    home: https://github.com/fosrl/newt
+    icon: https://avatars.githubusercontent.com/u/183037913
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: newt
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/newt-1.0.3/newt-1.0.3.tgz
+    version: 1.0.3
   - apiVersion: v2
     appVersion: latest
     created: "2025-05-14T17:20:51.550895112Z"
@@ -167,6 +274,23 @@ entries:
   nutify:
   - apiVersion: v2
     appVersion: amd64-latest
+    created: "2025-05-18T18:23:32.495605821Z"
+    description: Nutify is a comprehensive UPS monitoring system that provides real-time
+      insights into UPS health and performance through a user-friendly web interface,
+      detailed reports, and interactive charts.
+    digest: 03f9acaa77bc21b90fee7db6e60e1f558e0652d4c7cf6a58be9bc0cccabddad1
+    home: https://github.com/DartSteven/Nutify
+    icon: https://github.com/DartSteven/Nutify/blob/main/pic/Nutify-Logo.png
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: nutify
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/nutify-1.0.1/nutify-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: amd64-latest
     created: "2025-05-17T14:25:52.120904564Z"
     description: Nutify is a comprehensive UPS monitoring system that provides real-time
       insights into UPS health and performance through a user-friendly web interface,
@@ -183,6 +307,25 @@ entries:
     - https://github.com/ByKaj/helm/releases/download/nutify-1.0.0/nutify-1.0.0.tgz
     version: 1.0.0
   paperless-ngx:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-18T18:23:32.582069447Z"
+    description: Paperless-ngx is a document management system that transforms your
+      physical documents into a searchable digital archive by scanning and analyzing
+      paper documents. It automatically extracts information like dates, correspondents,
+      and content, allowing you to organize, search, and retrieve your documents without
+      maintaining physical paper storage.
+    digest: 8a42617206c0d6bf79bbb0f5ef999de1252ab6f745e2cf11530baa921b81126c
+    home: https://docs.paperless-ngx.com
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/paperless-ngx.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: paperless-ngx
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/paperless-ngx-1.0.1/paperless-ngx-1.0.1.tgz
+    version: 1.0.1
   - apiVersion: v2
     appVersion: latest
     created: "2025-05-18T15:47:14.640125222Z"
@@ -205,6 +348,25 @@ entries:
   prowlarr:
   - apiVersion: v2
     appVersion: latest
+    created: "2025-05-18T18:23:32.687476625Z"
+    description: Prowlarr is an indexer manager/proxy that integrates with various
+      media management applications like Sonarr, Radarr, and Lidarr. It centralizes
+      the management of indexers across all your media applications, allowing you
+      to configure and maintain them in one place while automatically syncing the
+      indexers to your other applications.
+    digest: a0964f4ca8e17c94c829b03cea1dc239fd8d9a35808111c9c3e97189e41a65f6
+    home: https://prowlarr.com
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/prowlarr.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: prowlarr
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/prowlarr-1.0.1/prowlarr-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: latest
     created: "2025-05-18T16:02:19.73880676Z"
     description: Prowlarr is an indexer manager/proxy that integrates with various
       media management applications like Sonarr, Radarr, and Lidarr. It centralizes
@@ -223,6 +385,25 @@ entries:
     - https://github.com/ByKaj/helm/releases/download/prowlarr-1.0.0/prowlarr-1.0.0.tgz
     version: 1.0.0
   radarr:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-18T18:23:32.782870519Z"
+    description: Radarr is an automated movie collection manager that monitors for
+      new releases, downloads them automatically, and organizes your media library.
+      It integrates with various download clients and media servers to provide a seamless
+      movie collection experience with customizable quality profiles and metadata
+      management.
+    digest: 1ef3f46992c5e2e5df116e8cd603e84dcf90ab340475a5f4939bb9f44a5f6a3c
+    home: https://radarr.video
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/radarr.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: radarr
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/radarr-1.0.1/radarr-1.0.1.tgz
+    version: 1.0.1
   - apiVersion: v2
     appVersion: latest
     created: "2025-05-18T16:17:14.051208358Z"
@@ -245,6 +426,24 @@ entries:
   readarr:
   - apiVersion: v2
     appVersion: develop
+    created: "2025-05-18T18:23:32.873397523Z"
+    description: Readarr is an e-book and audiobook collection manager that automatically
+      finds, downloads, and organizes your digital book library. It integrates with
+      various indexers and download clients to track authors, monitor for new releases,
+      and maintain a well-organized book collection with rich metadata.
+    digest: 3d2be4704fc1c6ed0b7fdcfbd8c582013f3a9f1ea10a432b5d31068f93606aa3
+    home: https://readarr.com
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/readarr.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: readarr
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/readarr-1.0.1/readarr-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: develop
     created: "2025-05-18T16:28:46.906504374Z"
     description: Readarr is an e-book and audiobook collection manager that automatically
       finds, downloads, and organizes your digital book library. It integrates with
@@ -264,6 +463,24 @@ entries:
   sabnzbd:
   - apiVersion: v2
     appVersion: latest
+    created: "2025-05-18T18:23:32.98567714Z"
+    description: SABnzbd is a free, open-source binary newsreader that simplifies
+      the process of downloading from Usenet by automating the downloading, verifying,
+      repairing, extracting, and organizing of files. It offers a web-based interface
+      that allows users to manage their downloads from any device on their network.
+    digest: c52be7b928ba0030bd02bc6a20715ac2a3f4906610e20461579d6426bd7aa50e
+    home: https://sabnzbd.org
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/sabnzbd.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: sabnzbd
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/sabnzbd-1.0.1/sabnzbd-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: latest
     created: "2025-05-18T16:45:38.550171169Z"
     description: SABnzbd is a free, open-source binary newsreader that simplifies
       the process of downloading from Usenet by automating the downloading, verifying,
@@ -281,6 +498,23 @@ entries:
     - https://github.com/ByKaj/helm/releases/download/sabnzbd-1.0.0/sabnzbd-1.0.0.tgz
     version: 1.0.0
   sonarr:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-18T18:23:33.073533741Z"
+    description: Sonarr is a smart PVR (Personal Video Recorder) application that
+      automates the downloading and organization of TV shows from various sources
+      based on user-defined quality preferences and release schedules.
+    digest: 99823d80fba2be60c5e7982c57a9e18bc7ef48cfa957d56fbdb9db532ff3404a
+    home: https://sonarr.tv
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/sonarr.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: sonarr
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/sonarr-1.0.4/sonarr-1.0.4.tgz
+    version: 1.0.4
   - apiVersion: v2
     appVersion: latest
     created: "2025-05-18T12:23:33.407478384Z"
@@ -352,6 +586,25 @@ entries:
   tautulli:
   - apiVersion: v2
     appVersion: latest
+    created: "2025-05-18T18:23:33.205371705Z"
+    description: Tautulli is a monitoring and tracking tool that provides detailed
+      statistics and insights about your Plex Media Server usage and activity. It
+      offers comprehensive analytics on what's being watched, who's watching it, and
+      when, along with notifications, history logging, and custom reports to help
+      you better understand your media consumption.
+    digest: 9ff67f4eda65201720b03ebf9f99da1b62c0ac4e1f214caa0a4c0b7a8c6e5188
+    home: https://tautulli.com
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/tautulli.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: tautulli
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/tautulli-1.0.1/tautulli-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: latest
     created: "2025-05-18T18:07:31.430205661Z"
     description: Tautulli is a monitoring and tracking tool that provides detailed
       statistics and insights about your Plex Media Server usage and activity. It
@@ -369,4 +622,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/tautulli-1.0.0/tautulli-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-18T18:07:31.430231892Z"
+generated: "2025-05-18T18:23:33.205459429Z"
