@@ -10,7 +10,7 @@ For more information about:
 {{- if .Chart.Home }}
 - the application: {{ .Chart.Home }}
 {{- end }}
-- the chart: https://github.com/bykaj/helm/charts/{{ .Chart.Name }}
+- the chart: https://github.com/bykaj/helm/tree/main/charts/{{ .Chart.Name }}
 
 Thanks!
 {{- range .Chart.Maintainers }}

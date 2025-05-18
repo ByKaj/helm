@@ -17,7 +17,7 @@ For more information about:
 {{- if .Chart.Home }}
 - the application: {{ .Chart.Home }}
 {{- end }}
-- this chart: https://github.com/bykaj/helm/charts/{{ .Chart.Name }}
+- this chart: https://github.com/bykaj/helm/tree/main/charts/{{ .Chart.Name }}
 - how-to guides: https://bykaj.com (coming soon)
 
 Thanks!

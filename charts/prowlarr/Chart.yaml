@@ -1,6 +1,6 @@
 apiVersion: v2
 name: prowlarr
-version: 1.0.0
+version: 1.0.1
 description: Prowlarr is an indexer manager/proxy that integrates with various media management applications like Sonarr, Radarr, and Lidarr. It centralizes the management of indexers across all your media applications, allowing you to configure and maintain them in one place while automatically syncing the indexers to your other applications.
 type: application
 home: https://prowlarr.com

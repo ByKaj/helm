@@ -1,6 +1,6 @@
 apiVersion: v2
 name: mosquitto
-version: 1.0.0
+version: 1.0.1
 description: Mosquitto is a lightweight open-source message broker that implements the MQTT protocol, enabling efficient machine-to-machine messaging for Internet of Things devices and applications. It provides a simple way to exchange messages between connected devices with minimal network bandwidth and resource requirements.
 type: application
 home: https://mosquitto.org

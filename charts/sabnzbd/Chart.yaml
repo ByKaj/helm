@@ -1,6 +1,6 @@
 apiVersion: v2
 name: sabnzbd
-version: 1.0.0
+version: 1.0.1
 description: SABnzbd is a free, open-source binary newsreader that simplifies the process of downloading from Usenet by automating the downloading, verifying, repairing, extracting, and organizing of files. It offers a web-based interface that allows users to manage their downloads from any device on their network.
 type: application
 home: https://sabnzbd.org
