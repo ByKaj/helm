@@ -1,0 +1,19 @@
+{{- range $containerKey, $containerValues := .Values.containers -}}
+{{- if $containerValues.env }}
+---
+# ------------------------------
+# -- {{ include "app.name" $ | title }} ConfigMap
+# -- Name: {{ include "app.fullname" $ }}-{{ $containerKey }}-env
+# ------------------------------
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "app.fullname" $ }}-{{ $containerKey }}-env
+  labels:
+    {{- include "app.labels" $ | nindent 4 }}
+data:
+  {{- range $containerValues.env }}
+  {{ .name }}: {{ .value | quote }}
+  {{- end }}
+{{ end -}}
+{{- end -}}

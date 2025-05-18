@@ -1,0 +1,11 @@
+apiVersion: v2
+name: linkwarden
+version: 1.0.0
+description: Linkwarden is a self-hosted bookmark and link management solution designed to help you organize, archive, and share web content. It allows you to categorize links into collections, add tags and notes, and create a searchable personal knowledge base of web resources that you can access from anywhere.
+type: application
+home: https://linkwarden.app
+maintainers:
+  - name: ByKaj
+    url: https://github.com/ByKaj
+icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/linkwarden.png
+appVersion: latest
