@@ -34,29 +34,30 @@ containers:
       name: media
 
 ingress:
-  # Your domain name
-  rootDomain: domain.tld
+  # Your domain name(s)
+  domains: 
+  - domain.tld
   # The subdomain of the domain (e.g. `my-app`)
   # @default -- `<app.fullname>`
-  subDomainOverride: ""
-  # The secret containing the wildcard certificate
-  # @default -- `domain-tld-tls`
-  tlsSecret: ""
+  subdomainOverride: ""
   
-# Add the persistent volumes (Longhorn & SMB) to the pod
+# Add the persistent volumes
 volumes:
+# Config store on Longhorn
 - name: config
   className: longhorn
   accessModes: 
   - ReadWriteOnce
   storage: 3Gi
   source: ""
+# Downloads on a SMB share
 - name: downloads
   className: smb
   accessModes:
   - ReadWriteMany
   storage: 100Gi
   source: //SERVER/Downloads
+# Media on a SMB share
 - name: media
   className: smb
   accessModes: 
