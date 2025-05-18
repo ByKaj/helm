@@ -1,5 +1,24 @@
 apiVersion: v1
 entries:
+  bazarr:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-18T13:02:52.564433017Z"
+    description: Bazarr is a companion application to Sonarr and Radarr that automatically
+      manages and downloads subtitles for your movies and TV shows. It integrates
+      with various subtitle providers to find and match the best subtitles for your
+      media library.
+    digest: 3c84cf8231aa982043b84f2715eee89761cb4addb802e2c4e6b794b66fe23d96
+    home: https://www.bazarr.media
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/bazarr.png
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: bazarr
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/bazarr-1.0.0/bazarr-1.0.0.tgz
+    version: 1.0.0
   dsmr-reader:
   - apiVersion: v2
     appVersion: latest
@@ -174,4 +193,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/sonarr-1.0.0/sonarr-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-18T12:23:33.407491068Z"
+generated: "2025-05-18T13:02:52.564455519Z"
