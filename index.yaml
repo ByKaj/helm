@@ -349,4 +349,24 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/sonarr-1.0.0/sonarr-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-18T17:08:32.879470825Z"
+  tautulli:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-18T18:07:31.430205661Z"
+    description: Tautulli is a monitoring and tracking tool that provides detailed
+      statistics and insights about your Plex Media Server usage and activity. It
+      offers comprehensive analytics on what's being watched, who's watching it, and
+      when, along with notifications, history logging, and custom reports to help
+      you better understand your media consumption.
+    digest: 578284263157e886951986c75dd8d6965c385102c6a9e09e21e7c85dda199c1d
+    home: https://tautulli.com
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/tautulli.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: tautulli
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/tautulli-1.0.0/tautulli-1.0.0.tgz
+    version: 1.0.0
+generated: "2025-05-18T18:07:31.430231892Z"
