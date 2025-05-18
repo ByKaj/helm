@@ -54,6 +54,25 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/dsmr-reader-1.0.1/dsmr-reader-1.0.1.tgz
     version: 1.0.1
+  linkwarden:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-18T14:05:13.078811831Z"
+    description: Linkwarden is a self-hosted bookmark and link management solution
+      designed to help you organize, archive, and share web content. It allows you
+      to categorize links into collections, add tags and notes, and create a searchable
+      personal knowledge base of web resources that you can access from anywhere.
+    digest: 6c643540592c90906f4e02437ee978e7c9ac5a91d488c79dc699820d46ceac50
+    home: https://linkwarden.app
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/linkwarden.png
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: linkwarden
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/linkwarden-1.0.0/linkwarden-1.0.0.tgz
+    version: 1.0.0
   newt:
   - apiVersion: v2
     appVersion: latest
@@ -193,4 +212,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/sonarr-1.0.0/sonarr-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-18T13:02:52.564455519Z"
+generated: "2025-05-18T14:05:13.078830236Z"
