@@ -162,6 +162,26 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/nutify-1.0.0/nutify-1.0.0.tgz
     version: 1.0.0
+  paperless-ngx:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-18T15:47:14.640125222Z"
+    description: Paperless-ngx is a document management system that transforms your
+      physical documents into a searchable digital archive by scanning and analyzing
+      paper documents. It automatically extracts information like dates, correspondents,
+      and content, allowing you to organize, search, and retrieve your documents without
+      maintaining physical paper storage.
+    digest: e1850d817a5843d3957d94faa39abc6f3c161362242a50fda8cfae80772ce252
+    home: https://docs.paperless-ngx.com
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/paperless-ngx.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: paperless-ngx
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/paperless-ngx-1.0.0/paperless-ngx-1.0.0.tgz
+    version: 1.0.0
   sonarr:
   - apiVersion: v2
     appVersion: latest
@@ -231,4 +251,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/sonarr-1.0.0/sonarr-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-18T14:34:15.358420244Z"
+generated: "2025-05-18T15:47:14.640152573Z"
