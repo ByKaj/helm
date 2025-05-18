@@ -1,0 +1,11 @@
+apiVersion: v2
+name: radarr
+version: 1.0.0
+description: Radarr is an automated movie collection manager that monitors for new releases, downloads them automatically, and organizes your media library. It integrates with various download clients and media servers to provide a seamless movie collection experience with customizable quality profiles and metadata management.
+type: application
+home: https://radarr.video
+maintainers:
+  - name: ByKaj
+    url: https://github.com/ByKaj
+icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/radarr.svg
+appVersion: latest
