@@ -17,12 +17,17 @@ To install a chart:
 helm install <chart-name> bykaj/<chart-name>
 ```
 
+For all the possible configuration overrides see the `values.yaml` file in the application chart folder. Installation example with a local `values.yaml` file and a specific namespace:
+```bash
+helm install --namespace <namespace> --create-namespace <chart-name> bykaj/<chart-name> -f /path/to/local/values.yaml
+```
+
 To uninstall the chart:
 ```bash
 helm uninstall <chart-name>
 ```
 
-To debug a chart:
+To debug a chart and see the generated manifest output:
 ```bash
 helm install --dry-run <chart-name> bykaj/<chart-name>
 ```
@@ -31,8 +36,7 @@ helm install --dry-run <chart-name> bykaj/<chart-name>
 These charts are specific for a [K3s](https://k3s.io) environment with:
 - [Longhorn](https://longhorn.io), for distributed block storage
 - [Cert-Manager](https://github.com/cert-manager/cert-manager), setup to generate wildcard Let's Encrypt certificates
-- [Reflector](https://github.com/emberstack/kubernetes-reflector), to mirror certificates to other namespaces
-- [Traefik](https://traefik.io), for ingress routing
+- [Traefik](https://traefik.io), as a reverse proxy for ingress routing
 
 The charts *should* work on [Kubernetes](https://kubernetes.io) but is not tested. For other environments download the charts and amend to your needs:
 ```bash
