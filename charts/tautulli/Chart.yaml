@@ -1,0 +1,11 @@
+apiVersion: v2
+name: tautulli
+version: 1.0.0
+description: Tautulli is a monitoring and tracking tool that provides detailed statistics and insights about your Plex Media Server usage and activity. It offers comprehensive analytics on what's being watched, who's watching it, and when, along with notifications, history logging, and custom reports to help you better understand your media consumption.
+type: application
+home: https://tautulli.com
+maintainers:
+  - name: ByKaj
+    url: https://github.com/ByKaj
+icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/tautulli.svg
+appVersion: latest
