@@ -222,6 +222,25 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/radarr-1.0.0/radarr-1.0.0.tgz
     version: 1.0.0
+  readarr:
+  - apiVersion: v2
+    appVersion: develop
+    created: "2025-05-18T16:28:46.906504374Z"
+    description: Readarr is an e-book and audiobook collection manager that automatically
+      finds, downloads, and organizes your digital book library. It integrates with
+      various indexers and download clients to track authors, monitor for new releases,
+      and maintain a well-organized book collection with rich metadata.
+    digest: 3023de6f1b1c40e30776adac7de41a3c489151cc3ca632e5bbef2c3f3318bb84
+    home: https://readarr.com
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/readarr.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: readarr
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/readarr-1.0.0/readarr-1.0.0.tgz
+    version: 1.0.0
   sonarr:
   - apiVersion: v2
     appVersion: latest
@@ -291,4 +310,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/sonarr-1.0.0/sonarr-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-18T16:17:14.051226503Z"
+generated: "2025-05-18T16:28:46.906527548Z"
