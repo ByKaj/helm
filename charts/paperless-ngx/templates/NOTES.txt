@@ -1,0 +1,26 @@
+{{ include "app.name" $ | title }} has been installed!
+{{ if .Values.ingress.enabled }}
+When the deployment is ready (give it a moment), your application will be available on:
+{{- range $domain := .Values.ingress.domains }}
+- {{ if (eq $.Values.ingress.kind "IngressRoute") }}https://{{ end }}{{ coalesce $.Values.ingress.subdomainOverride (include "app.fullname" $) }}.{{ $domain }}
+{{- end }}
+
+Make sure to update your DNS to make the domains resolve to the IP of your Load Balancer where Traefik is listening.
+{{- end }}
+
+To check the deployment status, run the following command:
+```
+kubectl get deployments --namespace {{ .Release.Namespace }}
+```
+
+For more information about:
+{{- if .Chart.Home }}
+- the application: {{ .Chart.Home }}
+{{- end }}
+- this chart: https://github.com/bykaj/helm/charts/{{ .Chart.Name }}
+- how-to guides: https://bykaj.com (coming soon)
+
+Thanks!
+{{- range .Chart.Maintainers }}
+-{{ .Name }}
+{{- end }}
