@@ -241,6 +241,25 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/readarr-1.0.0/readarr-1.0.0.tgz
     version: 1.0.0
+  sabnzbd:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-18T16:45:38.550171169Z"
+    description: SABnzbd is a free, open-source binary newsreader that simplifies
+      the process of downloading from Usenet by automating the downloading, verifying,
+      repairing, extracting, and organizing of files. It offers a web-based interface
+      that allows users to manage their downloads from any device on their network.
+    digest: 459559f94df230f6c910f606f25808b2753672f5f8be4fafd0821cffd03ac77c
+    home: https://sabnzbd.org
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/sabnzbd.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: sabnzbd
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/sabnzbd-1.0.0/sabnzbd-1.0.0.tgz
+    version: 1.0.0
   sonarr:
   - apiVersion: v2
     appVersion: latest
@@ -310,4 +329,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/sonarr-1.0.0/sonarr-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-18T16:28:46.906527548Z"
+generated: "2025-05-18T16:45:38.550194382Z"
