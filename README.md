@@ -1,35 +1,35 @@
 # Helm
-Helm charts repo for applications.
+Helm charts repo for self-hosted applications.
 
 
 ## Usage
-[Helm](https://helm.sh) must be installed to use the charts.  Please refer to Helm's [documentation](https://helm.sh/docs) to get started.
+[Helm](https://helm.sh) must be installed to use the charts. Please refer to Helm's [documentation](https://helm.sh/docs) to get started.
 
 Once Helm has been set up correctly, add this repo as follows:
 ```bash
 helm repo add bykaj https://charts.bykaj.com
 ```
 
-If you had already added this repo earlier, run `helm repo update` to retrieve the latest versions of the packages.  You can then run `helm search repo bykaj` to see the available charts.
+If you had already added this repo earlier, run `helm repo update` to retrieve the latest versions of the packages. You can then run `helm search repo bykaj` to see the available charts.
 
 To install a chart:
 ```bash
-helm install <chart-name> bykaj/<chart-name>
+helm install <app-name> bykaj/<chart-name>
 ```
 
 For all the possible configuration overrides see the `values.yaml` file in the application chart folder. Installation example with a local `values.yaml` file and a specific namespace:
 ```bash
-helm install --namespace <namespace> --create-namespace <chart-name> bykaj/<chart-name> -f /path/to/local/values.yaml
+helm install --namespace <namespace> --create-namespace <app-name> bykaj/<chart-name> -f /path/to/local/values.yaml
 ```
 
 To uninstall the chart:
 ```bash
-helm uninstall <chart-name>
+helm uninstall <app-name>
 ```
 
 To debug a chart and see the generated manifest output:
 ```bash
-helm install --dry-run <chart-name> bykaj/<chart-name>
+helm install --dry-run <app-name> bykaj/<chart-name>
 ```
 
 ## Prerequisites
