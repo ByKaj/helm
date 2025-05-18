@@ -73,6 +73,25 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/linkwarden-1.0.0/linkwarden-1.0.0.tgz
     version: 1.0.0
+  mosquitto:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-18T14:34:15.358395547Z"
+    description: Mosquitto is a lightweight open-source message broker that implements
+      the MQTT protocol, enabling efficient machine-to-machine messaging for Internet
+      of Things devices and applications. It provides a simple way to exchange messages
+      between connected devices with minimal network bandwidth and resource requirements.
+    digest: 7c25a2e9475bdeedb2a24e3dfb63f8f91d834110aec52f5b552ee23080da0efb
+    home: https://mosquitto.org
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/mosquitto.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: mosquitto
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/mosquitto-1.0.0/mosquitto-1.0.0.tgz
+    version: 1.0.0
   newt:
   - apiVersion: v2
     appVersion: latest
@@ -212,4 +231,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/sonarr-1.0.0/sonarr-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-18T14:05:13.078830236Z"
+generated: "2025-05-18T14:34:15.358420244Z"
