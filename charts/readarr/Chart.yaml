@@ -1,0 +1,11 @@
+apiVersion: v2
+name: readarr
+version: 1.0.0
+description: Readarr is an e-book and audiobook collection manager that automatically finds, downloads, and organizes your digital book library. It integrates with various indexers and download clients to track authors, monitor for new releases, and maintain a well-organized book collection with rich metadata.
+type: application
+home: https://readarr.com
+maintainers:
+  - name: ByKaj
+    url: https://github.com/ByKaj
+icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/readarr.svg
+appVersion: "develop"
