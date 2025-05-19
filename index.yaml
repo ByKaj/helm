@@ -40,6 +40,23 @@ entries:
   dsmr-reader:
   - apiVersion: v2
     appVersion: latest
+    created: "2025-05-19T14:02:15.81834092Z"
+    description: DSMR-reader is an open-source application that reads, stores, and
+      visualizes energy consumption data from smart meters supporting the Dutch Smart
+      Meter Requirements (DSMR) protocol.
+    digest: b03e33baf40ba286bdf67691c61375f51ad988530bb447b359d2ccbfcf3249e2
+    home: https://github.com/dsmrreader/dsmr-reader
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/dsmr-reader.png
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: dsmr-reader
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/dsmr-reader-1.0.4/dsmr-reader-1.0.4.tgz
+    version: 1.0.4
+  - apiVersion: v2
+    appVersion: latest
     created: "2025-05-18T18:23:32.046623375Z"
     description: DSMR-reader is an open-source application that reads, stores, and
       visualizes energy consumption data from smart meters supporting the Dutch Smart
@@ -622,4 +639,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/tautulli-1.0.0/tautulli-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-18T18:23:33.205459429Z"
+generated: "2025-05-19T14:02:15.818401827Z"
