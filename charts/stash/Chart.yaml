@@ -1,0 +1,11 @@
+apiVersion: v2
+name: stash
+version: 1.0.0
+description: Stash is a self-hosted organizer and manager for your adult media collection with advanced metadata scraping capabilities. It provides powerful tagging, searching, and scene recognition features while offering a modern web interface to browse and play your content.
+type: application
+home: https://stashapp.cc
+maintainers:
+  - name: ByKaj
+    url: https://github.com/ByKaj
+icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/stash.svg
+appVersion: latest
