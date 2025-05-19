@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/whisparr.svg" height="120" alt="Whisparr logo">
+    <img src="https://cdn.jsdelivr.net/gh/selfhst/icons/svg/whisparr.svg" height="120" alt="Whisparr logo">
 </p>
 
 # Whisparr
