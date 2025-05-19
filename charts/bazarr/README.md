@@ -10,18 +10,14 @@
 ## Usage
 Make a local `values.yaml` file with the following content and change the values to match your environment.
 ```yaml
+global:
+  # Local timezone
+  timezone: Europe/Amsterdam
+
 containers:
   app:
-    # Your local timezone and the user/group ID's (default: "0")
-    env:
-    - name: TZ
-      value: Europe/Amsterdam
-    - name: PUID
-      value: "0"
-    - name: PGID
-      value: "0"
-
     # The volume mounts inside the container
+    # The `name` references a volume in `volumes`
     volumeMounts:
     - mountPath: /config
       readOnly: false
@@ -45,20 +41,20 @@ ingress:
   
 # Add the persistent volumes
 volumes:
-# Config store on Longhorn
-- name: config
-  className: longhorn
-  accessModes: 
-  - ReadWriteOnce
-  storage: 3Gi
-  source: ""
-# Media on a SMB share
-- name: media
-  className: smb
-  accessModes: 
-  - ReadWriteMany
-  storage: 100Gi
-  source: //SERVER/Media
+  # Config store on Longhorn
+  - name: config
+    className: longhorn
+    accessModes: 
+    - ReadWriteOnce
+    storage: 3Gi
+    source: ""
+  # Media on a SMB share
+  - name: media
+    className: smb
+    accessModes: 
+    - ReadWriteMany
+    storage: 100Gi
+    source: //SERVER/Media
 ```
 
 Finally, install the chart:

@@ -5,6 +5,11 @@
 nameOverride: ""        # Defaults to <.Chart.Name>
 fullnameOverride: ""    # Defaults to <.Release.Name>-<.Chart.Name>
 
+global:
+  # Local timezone
+  # @default -- "Europe/Amsterdam"
+  timezone: Europe/Amsterdam
+
 # -----------------------------------------------------------------------------
 # -- Configure Pods and Containers
 # -----------------------------------------------------------------------------
@@ -59,7 +64,7 @@ containers:
     # @default -- `[]` (See [values.yaml])
     env:
     - name: TZ
-      value: Europe/Amsterdam
+      value: "{{ .Values.global.timezone }}"
     - name: PUID
       value: "0"
     - name: PGID
