@@ -3,6 +3,24 @@ entries:
   bazarr:
   - apiVersion: v2
     appVersion: latest
+    created: "2025-05-19T16:56:24.857201192Z"
+    description: Bazarr is a companion application to Sonarr and Radarr that automatically
+      manages and downloads subtitles for your movies and TV shows. It integrates
+      with various subtitle providers to find and match the best subtitles for your
+      media library.
+    digest: 57df633efb521a821c4431777acd8c882a03ac52b6833f8f5196eda677f6c3a5
+    home: https://www.bazarr.media
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/bazarr.png
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: bazarr
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/bazarr-1.0.2/bazarr-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
+    appVersion: latest
     created: "2025-05-18T18:23:31.954490322Z"
     description: Bazarr is a companion application to Sonarr and Radarr that automatically
       manages and downloads subtitles for your movies and TV shows. It integrates
@@ -656,4 +674,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/tautulli-1.0.0/tautulli-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-19T15:10:05.118503857Z"
+generated: "2025-05-19T16:56:24.857271668Z"
