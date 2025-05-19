@@ -13,61 +13,36 @@ You will need a cable and hardware that can run Linux software.
 ## Usage
 Make a local `values.yaml` file with the following content and change the values to match your environment.
 ```yaml
-containers:
-  db:
-    # Your local timezone and the database name
-    env:
-    - name: PG_TZ
-      value: Europe/Amsterdam
-    - name: POSTGRES_DB
-      value: dsmrreader
+global:
+  # Local timezone
+  timezone: Europe/Amsterdam
 
-    # The database username and password
-    secret:
-    - name: POSTGRES_USER
-      value: dsmrreader
-    - name: POSTGRES_PASSWORD
-      value: Pl3@s3Ch@ng3M3!
+  # Database name
+  databaseName: dsmrreader
 
-    # The volume mounts inside the container
-    volumeMounts:
-    - mountPath: /var/lib/postgresql/data
-      readOnly: false
-      name: config
-      subPath: postgresql
+  # Database username
+  databaseUsername: dsmrreader
 
-  app:
-    # Your local timezone and the operation mode
-    # Ref: https://github.com/xirixiz/dsmr-reader-docker#dsmr-datalogger-related
-    env:
-      - name: DJANGO_TIME_ZONE
-        value: Europe/Amsterdam
-      - name: DSMRREADER_OPERATION_MODE
-        value: api_server
-    # The admin username and password
-    secret:
-      - name: DSMRREADER_ADMIN_USER
-        value: admin
-      - name: DSMRREADER_ADMIN_PASSWORD
-        value: Pl3@s3!Ch@ng3M3
+  # Database password
+  databasePassword: dsmrreader
+
+  # Operation mode
+  # Ref: https://github.com/xirixiz/dsmr-reader-docker#dsmr-datalogger-related 
+  operationMode: api_server
+
+  # Backend admin username
+  adminUsername: admin
+
+  # Backend admin password
+  adminPassword: password
 
 ingress:
   # Your domain name(s)
   domains: 
-  - domain.tld
-  # The subdomain of the domain (e.g. `my-app`)
-  # @default -- `<app.fullname>`
+    - domain.tld
+
+  # The subdomain of the domain (e.g. `my-app`, defaults to `app.fullname`)
   subdomainOverride: ""
-  
-# Add the persistent volumes
-volumes:
-# Config store on Longhorn
-- name: config
-  className: longhorn
-  accessModes: 
-  - ReadWriteOnce
-  storage: 3Gi
-  source: ""
 ```
 
 Finally, install the chart:

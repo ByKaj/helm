@@ -5,6 +5,36 @@
 nameOverride: ""        # Defaults to <.Chart.Name>
 fullnameOverride: ""    # Defaults to <.Release.Name>-<.Chart.Name>
 
+global:
+  # Local timezone
+  # @default -- "Europe/Amsterdam"
+  timezone: Europe/Amsterdam
+
+  # Database name
+  # @default -- "dsmrreader"
+  databaseName: dsmrreader
+
+  # Database username
+  # @default -- "dsmrreader"
+  databaseUsername: dsmrreader
+
+  # Database password
+  # @default -- "dsmrreader"
+  databasePassword: dsmrreader
+
+  # Operation mode
+  # @default -- "api_server"
+  # Ref: https://github.com/xirixiz/dsmr-reader-docker#dsmr-datalogger-related 
+  operationMode: api_server
+
+  # Backend admin username
+  # @default -- "admin"
+  adminUsername: admin
+
+  # Backend admin password
+  # @default -- "password"
+  adminPassword: password
+
 # -----------------------------------------------------------------------------
 # -- Configure Pods and Containers
 # -----------------------------------------------------------------------------
@@ -17,12 +47,6 @@ containers:
       restartPolicy: Always
 
     securityContext: {}
-      # capabilities:
-      #   drop:
-      #   - ALL
-      # readOnlyRootFilesystem: true
-      # runAsNonRoot: true
-      # runAsUser: 1000
 
     # This sets the container image. 
     # Ref: https://kubernetes.io/docs/concepts/containers/images/
@@ -45,17 +69,7 @@ containers:
     # This is to setup the liveness and readiness probes 
     # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
     livenessProbe: {}
-      # httpGet:
-      #   path: /
-      #   port: 8080
-      # initialDelaySeconds: 15
-      # periodSeconds: 10
     readinessProbe: {}
-      # httpGet:
-      #   path: /
-      #   port: 8080
-      # initialDelaySeconds: 15
-      # periodSeconds: 10
 
     # Additional command line arguments for the container.
     args: []
@@ -64,9 +78,9 @@ containers:
     # @default -- `[]` (See [values.yaml])
     env:
     - name: PG_TZ
-      value: Europe/Amsterdam
+      value: "{{ .Values.global.timezone }}"
     - name: POSTGRES_DB
-      value: dsmrreader
+      value: "{{ .Values.global.databaseName }}"
     
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
@@ -76,9 +90,9 @@ containers:
    # @default -- `[]` (See [values.yaml])
     secret:
     - name: POSTGRES_USER
-      value: dsmrreader
+      value: "{{ .Values.global.databaseUsername }}"
     - name: POSTGRES_PASSWORD
-      value: Pl3@s3!Ch@ng3M3
+      value: "{{ .Values.global.databasePassword }}"
 
     # Use ConfigMap from another container (key). Overrides `secret`.
     # @default -- `""` (See [values.yaml])
@@ -92,12 +106,6 @@ containers:
       subPath: postgresql
 
     resources: {}
-      #limits:
-      #  cpu: 12m
-      #  memory: 500Mi
-      #requests:
-      #  cpu: 11m
-      #  memory: 400Mi
 
   app:
     # Define the container as a initContainer.
@@ -154,11 +162,17 @@ containers:
     - name: DGID
       value: "0"
     - name: DJANGO_TIME_ZONE
-      value: Europe/Amsterdam
+      value: "{{ .Values.global.timezone }}"
     - name: DSMRREADER_OPERATION_MODE
-      value: api_server
+      value: "{{ .Values.global.operationMode }}"
+    - name: DJANGO_DATABASE_ENGINE
+      value: "django.db.backends.postgresql"
+    - name: DJANGO_DATABASE_NAME
+      value: "{{ .Values.global.databaseName }}"
     - name: DJANGO_DATABASE_HOST
-      value: localhost
+      value: "localhost"
+    - name: DJANGO_DATABASE_PORT
+      value: "5432"
 
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
@@ -168,9 +182,13 @@ containers:
    # @default -- `[]` (See [values.yaml])
     secret:
     - name: DSMRREADER_ADMIN_USER
-      value: admin
+      value: "{{ .Values.global.adminUsername }}"
     - name: DSMRREADER_ADMIN_PASSWORD
-      value: Pl3@s3!Ch@ng3M3
+      value: "{{ .Values.global.adminPassword }}"
+    - name: DJANGO_DATABASE_USER
+      value: "{{ .Values.global.databaseUsername }}"
+    - name: DJANGO_DATABASE_PASSWORD
+      value: "{{ .Values.global.databasePassword }}"
 
     # Use ConfigMap from another container (key). Overrides `secret`.
     # @default -- `""` (See [values.yaml])
@@ -178,18 +196,8 @@ containers:
 
     # Additional volumeMounts on the output Deployment definition.
     volumeMounts: []
-    # - mountPath: /backup
-    #   readOnly: false
-    #   name: backups
-    #   subPath: Apps/DSMR-Reader
 
     resources: {}
-      #limits:
-      #  cpu: 12m
-      #  memory: 500Mi
-      #requests:
-      #  cpu: 11m
-      #  memory: 400Mi
 
 # This is for the secrets for pulling an image from a private repository
 # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
