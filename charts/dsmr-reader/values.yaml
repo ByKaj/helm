@@ -247,23 +247,28 @@ ingress:
   # @default -- 'IngressRoute' (See [values.yaml])
   kind: IngressRoute
 
-  # Root domain (<domain>.<tld>).
-  rootDomain: domain.tld
+  # Domainnames (format: - <domain>.<tld>).
+  domains:
+  - domain.tld
 
   # Override the subdomain.
   # @default -- '""' (See [values.yaml])
-  subDomainOverride: ""
+  subdomainOverride: ""
 
   # Entry point of the route.
   # @default -- 'websecure' (See [values.yaml])
   entryPoints:
   - websecure
 
-  # Attach middlewares to ingress route.
+  # Attach middlewares to ingress route
+  # These need to be present within the namespace
+  # @default -- `secure-headers` (See [values.yaml])
   middlewares:
   - secure-headers
 
-  # The TLS secretName for the certificate
+  # The TLS secretName for the certificate 
+  # Defaults to the Traefik wildcard certificate when ommited
+  # @default -- '""' (See [values.yaml])
   tlsSecret: ""
   
   # Ingress annotations.

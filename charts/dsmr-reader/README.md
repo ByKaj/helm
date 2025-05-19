@@ -15,12 +15,20 @@ Make a local `values.yaml` file with the following content and change the values
 ```yaml
 containers:
   db:
+    # Your local timezone and the database name
+    env:
+    - name: PG_TZ
+      value: Europe/Amsterdam
+    - name: POSTGRES_DB
+      value: dsmrreader
+
     # The database username and password
     secret:
-      - name: POSTGRES_USER
-        value: dsmrreader
-      - name: POSTGRES_PASSWORD
-        value: Pl3@s3!Ch@ng3M3
+    - name: POSTGRES_USER
+      value: dsmrreader
+    - name: POSTGRES_PASSWORD
+      value: Pl3@s3Ch@ng3M3!
+
     # The volume mounts inside the container
     volumeMounts:
     - mountPath: /var/lib/postgresql/data
@@ -44,17 +52,16 @@ containers:
         value: Pl3@s3!Ch@ng3M3
 
 ingress:
-  # Your domain name
-  rootDomain: domain.tld
+  # Your domain name(s)
+  domains: 
+  - domain.tld
   # The subdomain of the domain (e.g. `my-app`)
   # @default -- `<app.fullname>`
-  subDomainOverride: ""
-  # The secret containing the wildcard certificate
-  # @default -- `domain-tld-tls`
-  tlsSecret: ""
-
-# Add the persistent volumes (Longhorn) to the pod
+  subdomainOverride: ""
+  
+# Add the persistent volumes
 volumes:
+# Config store on Longhorn
 - name: config
   className: longhorn
   accessModes: 
