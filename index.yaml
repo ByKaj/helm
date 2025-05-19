@@ -635,6 +635,25 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/sonarr-1.0.0/sonarr-1.0.0.tgz
     version: 1.0.0
+  stash:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-19T20:46:07.994473271Z"
+    description: Stash is a self-hosted organizer and manager for your adult media
+      collection with advanced metadata scraping capabilities. It provides powerful
+      tagging, searching, and scene recognition features while offering a modern web
+      interface to browse and play your content.
+    digest: 679adf366db3ae1212e91b7b61d4469c71686e5841f2f4ca42868a35f14a7aaf
+    home: https://stashapp.cc
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/stash.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: stash
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/stash-1.0.0/stash-1.0.0.tgz
+    version: 1.0.0
   tautulli:
   - apiVersion: v2
     appVersion: latest
@@ -713,4 +732,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/whisparr-1.0.0/whisparr-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-19T17:25:27.460653944Z"
+generated: "2025-05-19T20:46:07.994539976Z"
