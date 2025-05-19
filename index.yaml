@@ -677,6 +677,25 @@ entries:
   whisparr:
   - apiVersion: v2
     appVersion: latest
+    created: "2025-05-19T17:25:27.460573194Z"
+    description: Whisparr is an automated adult video content manager that monitors
+      for new releases, downloads them automatically, and organizes your media collection.
+      It integrates with various indexers and download clients to provide a streamlined
+      experience for managing adult content with customizable quality profiles and
+      metadata management.
+    digest: ee6b6f148c2d6efb188386193e8c41a82b26e990b4cc3ee1d2828ef4dc7a068f
+    home: https://github.com/Whisparr/Whisparr
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/whisparr.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: whisparr
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/whisparr-1.0.1/whisparr-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: latest
     created: "2025-05-19T17:23:28.50333742Z"
     description: Whisparr is an automated adult video content manager that monitors
       for new releases, downloads them automatically, and organizes your media collection.
@@ -694,4 +713,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/whisparr-1.0.0/whisparr-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-19T17:23:28.503404085Z"
+generated: "2025-05-19T17:25:27.460653944Z"
