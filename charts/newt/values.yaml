@@ -5,6 +5,16 @@
 nameOverride: ""        # Defaults to <.Chart.Name>
 fullnameOverride: ""    # Defaults to <.Release.Name>-<.Chart.Name>
 
+global:
+  # The endpoint for Pangolin
+  # @default -- "https://pangolin.example.com"
+  pangolinEndpoint: https://pangolin.example.com
+
+  # Tunnel ID and secret (shown when creating a tunnel in Pangolin)
+  # @default -- ""
+  newtId: ""
+  newtSecret: ""
+
 # -----------------------------------------------------------------------------
 # -- Configure Pods and Containers
 # -----------------------------------------------------------------------------
@@ -48,20 +58,20 @@ containers:
     # Environment variables to pass to the deployed container. A specific ConfigMap is created.
     # @default -- `[]` (See [values.yaml])
     env:
-    - name: PANGOLIN_ENDPOINT
-      value: https://pangolin.domain.tld
-    - name: NEWT_ID
-      value: ChangeMe
+      - name: PANGOLIN_ENDPOINT
+        value: "{{ .Values.global.pangolinEndpoint }}"
+      - name: NEWT_ID
+        value: "{{ .Values.global.newtId }}"
     
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
     envUse: ""
 
-   # Secret variables to pass to the deployed container. A specific Secret is created.
-   # @default -- `[]` (See [values.yaml])
+    # Secret variables to pass to the deployed container. A specific Secret is created.
+    # @default -- `[]` (See [values.yaml])
     secret:
-    - name: NEWT_SECRET
-      value: ChangeMe
+      - name: NEWT_SECRET
+        value: "{{ .Values.global.newtSecret }}"
 
     # Use ConfigMap from another container (key). Overrides `secret`.
     # @default -- `""` (See [values.yaml])
@@ -71,12 +81,6 @@ containers:
     volumeMounts: []
 
     resources: {}
-      #limits:
-      #  cpu: 12m
-      #  memory: 500Mi
-      #requests:
-      #  cpu: 11m
-      #  memory: 400Mi
 
 # This is for the secrets for pulling an image from a private repository
 # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -116,8 +120,8 @@ serviceAccount:
 # Ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
 dnsConfig:
   options:
-  - name: ndots
-    value: "1"
+    - name: ndots
+      value: "1"
 
 # This is for setting up a service.
 # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
@@ -133,17 +137,16 @@ ingress:
   # @default -- 'IngressRoute' (See [values.yaml])
   kind: IngressRoute
 
-  # Root domain (<domain>.<tld>).
-  rootDomain: domain.tld
-
+  # Domainnames (format: - <domain>.<tld>).
+  domains: []
+  
   # Override the subdomain.
   # @default -- '""' (See [values.yaml])
-  subDomainOverride: ""
+  subdomainOverride: ""
 
   # Entry point of the route.
   # @default -- 'websecure' (See [values.yaml])
-  entryPoints:
-  - websecure
+  entryPoints: []
 
   # Attach middlewares to ingress route.
   middlewares: []
@@ -164,20 +167,8 @@ credentials: {}
   #   namespace: default
 
 # Additional volumes on the output Deployment definition.
-# Longhorn as storage required.
-volumes: []
-# - name: config
-#   className: longhorn
-#   accessModes: 
-#   - ReadWriteOnce
-#   storage: 3Gi
-#   source: ""
-# - name: backups
-#   className: smb
-#   accessModes: 
-#   - ReadWriteMany
-#   storage: 100Gi
-#   source: //SERVER/Backups
+# Longhorn as storage required for persistent config store.
+volumes: {}
 
 # -----------------------------------------------------------------------------
 # -- Scheduling, Preemption and Eviction
@@ -202,7 +193,3 @@ replicaCount: 1
 # Ref: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:
   enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80

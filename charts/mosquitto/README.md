@@ -7,42 +7,26 @@
 
 **Homepage:** <https://mosquitto.org>
 
+## Prerequisites
+This application requires:
+- A volume in Longhorn named `mosquitto-config`;
+- A secret with a wildcard certificate in the same namespace named `example-com-tls` (change to your domainname);
+- A Traefik entrypoint named `mqtts` (can be overridden with `ingress.entryPoints`) for MQTTS traffic on port 8883 on your Load Balancer.
+
 ## Usage
-**NOTE:** This application uses a **Traefik IngressRouteTCP** router. Make sure you have an entrypoint (aptly named `mqtts`, or override with `ingress.entryPoints`) for MQTTS traffic on port 8883 on your Load Balancer. The deployment will fail otherwise.
-
-Make a local `values.yaml` file with the following content and change the values to match your environment.
+Make a `values.yaml` file with the following (minimal) content and change the values to match your environment. For all the possible configuration overrides see [values.yaml](https://github.com/ByKaj/helm/blob/main/charts/mosquitto/values.yaml).
 ```yaml
-containers:
-  app:
-    # The volume mounts inside the container
-    volumeMounts:
-    - mountPath: /mosquitto/config/
-      name: config
-      subPath: config
-    - mountPath: /mosquitto/data
-      name: config
-      subPath: data
-    - mountPath: /mosquitto/log
-      name: config
-      subPath: log
-
+global:
+  # Storage request for the config folder
+  configStorage: 1Gi
+  
 ingress:
   # Your domain name(s)
   domains: 
-  - domain.tld
-  # The subdomain of the domain (e.g. `my-app`)
-  # @default -- `<app.fullname>`
+    - example.com
+
+  # The subdomain of the domain (e.g. `my-app`, defaults to `app.fullname`)
   subdomainOverride: ""
-  
-# Add the persistent volumes
-volumes:
-# Config store on Longhorn
-- name: config
-  className: longhorn
-  accessModes: 
-  - ReadWriteOnce
-  storage: 1Gi
-  source: ""
 ```
 
 Finally, install the chart:

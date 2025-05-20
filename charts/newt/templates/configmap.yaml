@@ -13,7 +13,7 @@ metadata:
     {{- include "app.labels" $ | nindent 4 }}
 data:
   {{- range $containerValues.env }}
-  {{ .name }}: {{ .value | quote }}
+  {{ .name }}: {{ tpl .value $ | quote }}
   {{- end }}
 {{ end -}}
 {{- end -}}

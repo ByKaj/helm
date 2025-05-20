@@ -5,6 +5,88 @@
 nameOverride: ""        # Defaults to <.Chart.Name>
 fullnameOverride: ""    # Defaults to <.Release.Name>-<.Chart.Name>
 
+global:
+  # Local timezone
+  # @default -- "Europe/Amsterdam"
+  timezone: Europe/Amsterdam
+
+  # Storage request for the config folder
+  configStorage: 3Gi
+
+  # Source and target for your movies folder
+  archive:
+    # Source on the SMB share
+    source: //SERVER/Archive
+    # Mount paths in the container with the corresponding subpath on the share
+    media:
+      mountPath: /usr/src/paperless/media
+      subPath: media
+    consume:
+      mountPath: /usr/src/paperless/consume
+      subPath: consume
+    export:
+      mountPath: /usr/src/paperless/export
+      subPath: export
+
+  # Database name
+  # @default -- "paperless"
+  databaseName: paperless
+
+  # Database username
+  # @default -- "paperless"
+  databaseUsername: paperless
+
+  # Database password
+  # @default -- "Pl3@s3Ch@ng3M3!"
+  databasePassword: Pl3@s3Ch@ng3M3!
+
+  # Admin user credentials
+  # Automatically creates a superuser with the provided username and password
+  paperlessAdminUsername: admin
+  paperlessAdminPassword: Pl3@s3Ch@ng3M3!
+
+  # Paperless URL
+  # @default -- "https://paperless.example.com"
+  paperlessUrl: https://paperless.example.com
+
+  # Customize the language that Paperless will attempt to use when parsing documents
+  # @default -- "eng"
+  paperlessOcrLanguage: eng
+
+  # Install languages not installed by default
+  # @default -- ""
+  paperlessOcrLanguages: ""
+
+  # Filename format
+  # @default -- "{ created }-{ correspondent }-{ title }"
+  paperlessFilenameFormat: "{ created }-{ correspondent }-{ title }"
+
+  # Secret key for encryption
+  paperlessSecretKey: SecretKeyOf50+Char
+
+  # Global API key
+  paperlessApiKey: ApiKeyOf40+Char
+
+  # Poll frequency (in minutes) of the `consume` folder
+  paperlessConsumerPolling: "15"
+
+  # When using a SSO provider: configuration
+  # @default -- ""
+  paperlessApps: ""
+  paperlessSocialAccountProviders: ""
+
+  # When using a SSO provider: disable regular login
+  # @default -- "false"
+  paperlessDisableRegularLogin: "false"
+
+  # When using a SSO provider: redirect login to SSO
+  # @default -- "false"
+  paperlessRedirectLoginToSso: "false"
+
+  # URL to redirect the user to after a logout
+  # @default -- "None"
+  paperlessLogoutRedirectUrl: "None"
+
 # -----------------------------------------------------------------------------
 # -- Configure Pods and Containers
 # -----------------------------------------------------------------------------
@@ -30,12 +112,12 @@ containers:
     # This is for setting up a service
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
-    # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-    - name: psql
-      enabled: false
-      port: 5432
-      protocol: TCP
-      ingress: false
+      # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
+      - name: psql
+        enabled: false
+        port: 5432
+        protocol: TCP
+        ingress: false
 
     # This is to setup the liveness and readiness probes 
     # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
@@ -48,22 +130,22 @@ containers:
     # Environment variables to pass to the deployed container. A specific ConfigMap is created.
     # @default -- `[]` (See [values.yaml])
     env:
-    - name: PG_TZ
-      value: Europe/Amsterdam
-    - name: POSTGRES_DB
-      value: paperless
+      - name: PG_TZ
+        value: "{{ .Values.global.timezone }}"
+      - name: POSTGRES_DB
+        value: "{{ .Values.global.databaseName }}"
     
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
     envUse: ""
 
-   # Secret variables to pass to the deployed container. A specific Secret is created.
-   # @default -- `[]` (See [values.yaml])
+    # Secret variables to pass to the deployed container. A specific Secret is created.
+    # @default -- `[]` (See [values.yaml])
     secret:
-    - name: POSTGRES_USER
-      value: paperless
-    - name: POSTGRES_PASSWORD
-      value: Pl3@s3Ch@ng3M3!
+      - name: POSTGRES_USER
+        value: "{{ .Values.global.databaseUsername }}"
+      - name: POSTGRES_PASSWORD
+        value: "{{ .Values.global.databasePassword }}"
 
     # Use ConfigMap from another container (key). Overrides `secret`.
     # @default -- `""` (See [values.yaml])
@@ -71,10 +153,10 @@ containers:
 
     # Additional volumeMounts on the output Deployment definition.
     volumeMounts:
-    - mountPath: /var/lib/postgresql/data
-      readOnly: false
-      name: config
-      subPath: postgresql
+      - mountPath: /var/lib/postgresql/data
+        readOnly: false
+        name: config
+        subPath: postgresql
 
     resources: {}
 
@@ -98,12 +180,12 @@ containers:
     # This is for setting up a service
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
-    # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-    - name: redis
-      enabled: false
-      port: 6379
-      protocol: TCP
-      ingress: false
+      # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
+      - name: redis
+        enabled: false
+        port: 6379
+        protocol: TCP
+        ingress: false
 
     # This is to setup the liveness and readiness probes 
     # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
@@ -112,7 +194,7 @@ containers:
 
     # Additional command line arguments for the container.
     args:
-    - "--loglevel warning"
+      - "--loglevel warning"
 
     # Environment variables to pass to the deployed container. A specific ConfigMap is created.
     # @default -- `[]` (See [values.yaml])
@@ -122,8 +204,8 @@ containers:
     # @default -- `""` (See [values.yaml])
     envUse: ""
 
-   # Secret variables to pass to the deployed container. A specific Secret is created.
-   # @default -- `[]` (See [values.yaml])
+    # Secret variables to pass to the deployed container. A specific Secret is created.
+    # @default -- `[]` (See [values.yaml])
     secret: []
 
     # Use ConfigMap from another container (key). Overrides `secret`.
@@ -132,10 +214,10 @@ containers:
 
     # Additional volumeMounts on the output Deployment definition.
     volumeMounts:
-    - mountPath: /data
-      readOnly: false
-      name: config
-      subPath: redis
+      - mountPath: /data
+        readOnly: false
+        name: config
+        subPath: redis
 
     resources: {}
 
@@ -159,12 +241,12 @@ containers:
     # This is for setting up a service
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
-    # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-    - name: http
-      enabled: true
-      port: 8000
-      protocol: TCP
-      ingress: true
+      # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
+      - name: http
+        enabled: true
+        port: 8000
+        protocol: TCP
+        ingress: true
 
     # This is to setup the liveness and readiness probes 
     # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
@@ -186,43 +268,61 @@ containers:
 
     # Environment variables to pass to the deployed container. A specific ConfigMap is created.
     # @default -- `[]` (See [values.yaml])
+    # Ref: https://docs.paperless-ngx.com/configuration/
     env:
-    - name: USERMAP_UID
-      value: "0"
-    - name: USERMAP_GID
-      value: "0"
-    - name: POSTGRES_DB
-      value: paperless
-    - name: PAPERLESS_REDIS
-      value: redis://localhost:6379
-    - name: PAPERLESS_DBHOST
-      value: localhost
-    - name: PAPERLESS_URL
-      value: https://paperless.domain.tld
-    - name: PAPERLESS_TIME_ZONE
-      value: Europe/Amsterdam
-    - name: PAPERLESS_OCR_LANGUAGE
-      value: nld+eng
-    - name: PAPERLESS_OCR_LANGUAGES
-      value: nld
-    - name: PAPERLESS_FILENAME_FORMAT
-      value: "{ created }-{ correspondent }-{ title }"
+      - name: USERMAP_UID
+        value: "0"
+      - name: USERMAP_GID
+        value: "0"
+      - name: PAPERLESS_DBNAME
+        value: "{{ .Values.global.databaseName }}"
+      - name: PAPERLESS_REDIS
+        value: redis://localhost:6379
+      - name: PAPERLESS_DBHOST
+        value: localhost
+      - name: PAPERLESS_URL
+        value: "{{ .Values.global.paperlessUrl }}"
+      - name: PAPERLESS_TIME_ZONE
+        value: "{{ .Values.global.timezone }}"
+      - name: PAPERLESS_OCR_LANGUAGE
+        value: "{{ .Values.global.paperlessOcrLanguage }}"
+      - name: PAPERLESS_OCR_LANGUAGES
+        value: "{{ .Values.global.paperlessOcrLanguages }}"
+      - name: PAPERLESS_FILENAME_FORMAT
+        value: "{{ .Values.global.paperlessFilenameFormat }}"
+      - name: PAPERLESS_CONSUMER_POLLING
+        value: "{{ .Values.global.paperlessConsumerPolling }}"
+      - name: PAPERLESS_APPS
+        value: "{{ .Values.global.paperlessApps }}"
+      - name: PAPERLESS_SOCIALACCOUNT_PROVIDERS
+        value: "{{ .Values.global.paperlessSocialAccountProviders }}"
+      - name: PAPERLESS_DISABLE_REGULAR_LOGIN
+        value: "{{ .Values.global.paperlessDisableRegularLogin }}"
+      - name: PAPERLESS_REDIRECT_LOGIN_TO_SSO
+        value: "{{ .Values.global.paperlessRedirectLoginToSso }}"
+      - name: PAPERLESS_LOGOUT_REDIRECT_URL
+        value: "{{ .Values.global.paperlessLogoutRedirectUrl }}"
 
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
     envUse: ""
 
-   # Secret variables to pass to the deployed container. A specific Secret is created.
-   # @default -- `[]` (See [values.yaml])
+    # Secret variables to pass to the deployed container. A specific Secret is created.
+    # @default -- `[]` (See [values.yaml])
+    # Ref: https://docs.paperless-ngx.com/configuration/
     secret:
-    - name: POSTGRES_USER
-      value: paperless
-    - name: POSTGRES_PASSWORD
-      value: Pl3@s3Ch@ng3M3!
-    - name: PAPERLESS_SECRET_KEY
-      value: Pl3@s3Ch@ng3M3!
-    - name: PAPERLESS_API_KEY
-      value: Pl3@s3Ch@ng3M3!
+      - name: PAPERLESS_ADMIN_USER
+        value: "{{ .Values.global.paperlessAdminUsername }}"
+      - name: PAPERLESS_ADMIN_PASSWORD
+        value: "{{ .Values.global.paperlessAdminPassword }}"
+      - name: PAPERLESS_DBUSER
+        value: "{{ .Values.global.databaseUsername }}"
+      - name: PAPERLESS_DBPASS
+        value: "{{ .Values.global.databasePassword }}"
+      - name: PAPERLESS_SECRET_KEY
+        value: "{{ .Values.global.paperlessSecretKey }}"
+      - name: PAPERLESS_API_KEY
+        value: "{{ .Values.global.paperlessApiKey }}"
 
     # Use ConfigMap from another container (key). Overrides `secret`.
     # @default -- `""` (See [values.yaml])
@@ -230,21 +330,18 @@ containers:
 
     # Additional volumeMounts on the output Deployment definition.
     volumeMounts:
-    - mountPath: /usr/src/paperless/data
-      name: config
-      subPath: paperless
-    - mountPath: /usr/src/paperless/media
-      readOnly: false
-      name: archive
-      subPath: media
-    - mountPath: /usr/src/paperless/consume
-      readOnly: false
-      name: archive
-      subPath: consume
-    - mountPath: /usr/src/paperless/export
-      readOnly: false
-      name: archive
-      subPath: export
+      - mountPath: /usr/src/paperless/data
+        name: config
+        subPath: paperless
+      - name: archive
+        mountPath: "{{ .Values.global.archive.media.mountPath }}"
+        subPath: "{{ .Values.global.archive.media.subPath }}"
+      - name: archive
+        mountPath: "{{ .Values.global.archive.consume.mountPath }}"
+        subPath: "{{ .Values.global.archive.consume.subPath }}"
+      - name: archive
+        mountPath: "{{ .Values.global.archive.export.mountPath }}"
+        subPath: "{{ .Values.global.archive.export.subPath }}"
 
     resources: {}
 
@@ -286,8 +383,8 @@ serviceAccount:
 # Ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
 dnsConfig:
   options:
-  - name: ndots
-    value: "1"
+    - name: ndots
+      value: "1"
 
 # This is for setting up a service.
 # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
@@ -305,7 +402,7 @@ ingress:
 
   # Domainnames (format: - <domain>.<tld>).
   domains:
-  - domain.tld
+    - example.com
 
   # Override the subdomain.
   # @default -- '""' (See [values.yaml])
@@ -314,13 +411,13 @@ ingress:
   # Entry point of the route.
   # @default -- 'websecure' (See [values.yaml])
   entryPoints:
-  - websecure
+    - websecure
 
   # Attach middlewares to ingress route
   # These need to be present within the namespace
   # @default -- `secure-headers` (See [values.yaml])
   middlewares:
-  - secure-headers
+    - secure-headers
 
   # The TLS secretName for the certificate 
   # Defaults to the Traefik wildcard certificate when ommited
@@ -340,20 +437,20 @@ credentials:
     namespace: default
 
 # Additional volumes on the output Deployment definition.
-# Longhorn as storage required.
+# Longhorn as storage required for persistent config store.
 volumes:
-- name: config
-  className: longhorn
-  accessModes: 
-  - ReadWriteOnce
-  storage: 3Gi
-  source: ""
-- name: archive
-  className: smb
-  accessModes: 
-  - ReadWriteMany
-  storage: 100Gi
-  source: //SERVER/Archive
+  config:
+    className: longhorn
+    accessModes: 
+      - ReadWriteOnce
+    storage: "{{ .Values.global.configStorage }}"
+    source: ""
+  archive:
+    className: smb
+    accessModes: 
+      - ReadWriteMany
+    storage: 100Gi
+    source: "{{ .Values.global.archive.source }}"
 
 # -----------------------------------------------------------------------------
 # -- Scheduling, Preemption and Eviction

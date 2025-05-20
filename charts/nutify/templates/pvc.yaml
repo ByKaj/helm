@@ -1,10 +1,10 @@
 {{- if .Values.volumes -}}
-{{- range .Values.volumes }}
+{{- range $key, $volume := .Values.volumes }}
 {{- $name := "" -}}
-{{- if eq (toString .className) "longhorn" -}}
-  {{- $name = ((cat (include "app.fullname" $) "-" .name "-lgn") | nospace) -}}
-{{- else if eq (toString .className) "smb" -}}
-  {{- $name = ((cat (include "app.fullname" $) "-" .name "-smb") | nospace) -}}
+{{- if (eq $volume.className "longhorn") -}}
+  {{- $name = (cat (include "app.fullname" $) "-" $key "-lgn" | nospace) -}}
+{{- else if (eq $volume.className "smb") -}}
+  {{- $name = (cat (include "app.fullname" $) "-" $key "-smb" | nospace) -}}
 {{- end -}}
 ---
 # ------------------------------
@@ -18,16 +18,16 @@ metadata:
   labels:
     {{- include "app.labels" $ | nindent 4 }}
 spec:
-  {{- with .accessModes }}
+  {{- with $volume.accessModes }}
   accessModes:
     {{- range . }}
     - {{ . }}
     {{- end }}
   {{- end }}
-  storageClassName: {{ .className }}
+  storageClassName: {{ $volume.className }}
   resources:
     requests:
-      storage: {{ .storage }}
+      storage: {{ tpl $volume.storage $ }}
   volumeName: {{ $name }}-pv
 {{ end -}}
 {{- end -}}

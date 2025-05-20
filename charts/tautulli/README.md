@@ -7,43 +7,28 @@
 
 **Homepage:** <https://tautulli.com>
 
-## Usage
-Make a local `values.yaml` file with the following content and change the values to match your environment.
-```yaml
-containers:
-  app:
-    # Your local timezone and the user/group ID's (default: "0")
-    env:
-    - name: TZ
-      value: Europe/Amsterdam
-    - name: PUID
-      value: "0"
-    - name: PGID
-      value: "0"
+## Prerequisites
+This application requires:
+- A volume in Longhorn named `tautulli-config`;
+- A secret with a wildcard certificate in the same namespace named `example-com-tls` (change to your domainname).
 
-    # The volume mounts inside the container
-    volumeMounts:
-    - mountPath: /config
-      readOnly: false
-      name: config
+## Usage
+Make a `values.yaml` file with the following (minimal) content and change the values to match your environment. For all the possible configuration overrides see [values.yaml](https://github.com/ByKaj/helm/blob/main/charts/tautulli/values.yaml).
+```yaml
+global:
+  # Local timezone
+  timezone: Europe/Amsterdam
+
+  # Storage request for the config folder
+  configStorage: 1Gi
 
 ingress:
   # Your domain name(s)
   domains: 
-  - domain.tld
-  # The subdomain of the domain (e.g. `my-app`)
-  # @default -- `<app.fullname>`
+    - example.com
+
+  # The subdomain of the domain (e.g. `my-app`, defaults to `app.fullname`)
   subdomainOverride: ""
-  
-# Add the persistent volumes
-volumes:
-# Config store on Longhorn
-- name: config
-  className: longhorn
-  accessModes: 
-  - ReadWriteOnce
-  storage: 1Gi
-  source: ""
 ```
 
 Finally, install the chart:

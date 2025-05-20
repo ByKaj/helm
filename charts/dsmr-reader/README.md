@@ -10,13 +10,21 @@ You will need a cable and hardware that can run Linux software.
 
 **Homepage:** <https://github.com/dsmrreader/dsmr-reader>
 
+## Prerequisites
+This application requires:
+- A volume in Longhorn named `dsmr-reader-config`;
+- A secret with a wildcard certificate in the same namespace named `example-com-tls` (change to your domainname).
+
 ## Usage
-Make a local `values.yaml` file with the following content and change the values to match your environment.
+Make a `values.yaml` file with the following (minimal) content and change the values to match your environment. For all the possible configuration overrides see [values.yaml](https://github.com/ByKaj/helm/blob/main/charts/dsmr-reader/values.yaml).
 ```yaml
 global:
   # Local timezone
   timezone: Europe/Amsterdam
 
+  # Storage request for the config folder
+  configStorage: 3Gi
+  
   # Database name
   databaseName: dsmrreader
 
@@ -39,7 +47,7 @@ global:
 ingress:
   # Your domain name(s)
   domains: 
-    - domain.tld
+    - example.com
 
   # The subdomain of the domain (e.g. `my-app`, defaults to `app.fullname`)
   subdomainOverride: ""

@@ -10,6 +10,27 @@ global:
   # @default -- "Europe/Amsterdam"
   timezone: Europe/Amsterdam
 
+  # Storage request for the config folder
+  configStorage: 1Gi
+
+  # Source and target for your movies folder
+  movies:
+    # Mount path in the container
+    # @default -- "/movies"
+    mountPath: /movies
+    # Source on the SMB share
+    source: //SERVER/Media
+    subPath: Movies
+
+  # Source and target for your series folder
+  series:
+    # Mount path in the container
+    # @default -- "/tv"
+    mountPath: /tv
+    # Source on the SMB share
+    source: //SERVER/Media
+    subPath: Series
+
 # -----------------------------------------------------------------------------
 # -- Configure Pods and Containers
 # -----------------------------------------------------------------------------
@@ -36,11 +57,11 @@ containers:
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
     # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-    - name: http
-      enabled: true
-      port: 6767
-      protocol: TCP
-      ingress: true
+      - name: http
+        enabled: true
+        port: 6767
+        protocol: TCP
+        ingress: true
 
     # This is to setup the liveness and readiness probes 
     # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
@@ -63,19 +84,19 @@ containers:
     # Environment variables to pass to the deployed container. A specific ConfigMap is created.
     # @default -- `[]` (See [values.yaml])
     env:
-    - name: TZ
-      value: "{{ .Values.global.timezone }}"
-    - name: PUID
-      value: "0"
-    - name: PGID
-      value: "0"
+      - name: TZ
+        value: "{{ .Values.global.timezone }}"
+      - name: PUID
+        value: "0"
+      - name: PGID
+        value: "0"
     
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
     envUse: ""
 
-   # Secret variables to pass to the deployed container. A specific Secret is created.
-   # @default -- `[]` (See [values.yaml])
+    # Secret variables to pass to the deployed container. A specific Secret is created.
+    # @default -- `[]` (See [values.yaml])
     secret: []
 
     # Use ConfigMap from another container (key). Overrides `secret`.
@@ -84,17 +105,14 @@ containers:
 
     # Additional volumeMounts on the output Deployment definition.
     volumeMounts:
-    - mountPath: /config
-      readOnly: false
-      name: config
-    - mountPath: /movies
-      subPath: Movies
-      readOnly: false
-      name: media
-    - mountPath: /tv
-      subPath: Series
-      readOnly: false
-      name: media
+      - name: config
+        mountPath: /config
+      - name: movies
+        mountPath: "{{ .Values.global.movies.mountPath }}"
+        subPath: "{{ .Values.global.movies.subPath }}"
+      - name: series
+        mountPath: "{{ .Values.global.series.mountPath }}"
+        subPath: "{{ .Values.global.series.subPath }}"
 
     resources: {}
 
@@ -136,8 +154,8 @@ serviceAccount:
 # Ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
 dnsConfig:
   options:
-  - name: ndots
-    value: "1"
+    - name: ndots
+      value: "1"
 
 # This is for setting up a service.
 # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
@@ -155,7 +173,7 @@ ingress:
 
   # Domainnames (format: - <domain>.<tld>).
   domains:
-  - domain.tld
+    - example.com
 
   # Override the subdomain.
   # @default -- '""' (See [values.yaml])
@@ -164,13 +182,13 @@ ingress:
   # Entry point of the route.
   # @default -- 'websecure' (See [values.yaml])
   entryPoints:
-  - websecure
+    - websecure
 
   # Attach middlewares to ingress route
   # These need to be present within the namespace
   # @default -- `secure-headers` (See [values.yaml])
   middlewares:
-  - secure-headers
+    - secure-headers
 
   # The TLS secretName for the certificate 
   # Defaults to the Traefik wildcard certificate when ommited
@@ -190,20 +208,26 @@ credentials:
     namespace: default
 
 # Additional volumes on the output Deployment definition.
-# Longhorn as storage required.
+# Longhorn as storage required for persistent config store.
 volumes:
-- name: config
-  className: longhorn
-  accessModes: 
-  - ReadWriteOnce
-  storage: 3Gi
-  source: ""
-- name: media
-  className: smb
-  accessModes: 
-  - ReadWriteMany
-  storage: 100Gi
-  source: //SERVER/Media
+  config:
+    className: longhorn
+    accessModes: 
+      - ReadWriteOnce
+    storage: "{{ .Values.global.configStorage }}"
+    source: ""
+  movies:
+    className: smb
+    accessModes: 
+      - ReadWriteMany
+    storage: 100Gi
+    source: "{{ .Values.global.movies.source }}"
+  series:
+    className: smb
+    accessModes: 
+      - ReadWriteMany
+    storage: 100Gi
+    source: "{{ .Values.global.series.source }}"
 
 # -----------------------------------------------------------------------------
 # -- Scheduling, Preemption and Eviction

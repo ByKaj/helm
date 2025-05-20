@@ -7,122 +7,92 @@
 
 **Homepage:** <https://docs.paperless-ngx.com>
 
+## Prerequisites
+This application requires:
+- A volume in Longhorn named `paperless-ngx-config`;
+- A secret with a wildcard certificate in the same namespace named `example-com-tls` (change to your domainname);
+- A SMB share (with the root folders `consume`, `media` and `export`) where your documents are stored.
+
 ## Usage
-Make a local `values.yaml` file with the following content and change the values to match your environment.
+Make a `values.yaml` file with the following (minimal) content and change the values to match your environment. For all the possible configuration overrides see [values.yaml](https://github.com/ByKaj/helm/blob/main/charts/paperless-ngx/values.yaml).
 ```yaml
-containers:
-  ## PostgreSQL
-  db:
-    # Your local timezone and the database name
-    env:
-    - name: PG_TZ
-      value: Europe/Amsterdam
-    - name: POSTGRES_DB
-      value: paperless
+global:
+  # Local timezone
+  timezone: Europe/Amsterdam
 
-    # The database username and password
-    secret:
-    - name: POSTGRES_USER
-      value: paperless
-    - name: POSTGRES_PASSWORD
-      value: Pl3@s3Ch@ng3M3!
+  # Storage request for the config folder
+  configStorage: 3Gi
 
-    # The volume mounts inside the container
-    volumeMounts:
-    - mountPath: /var/lib/postgresql/data
-      readOnly: false
-      name: config
-      subPath: postgresql
+  # Source and target for your movies folder
+  archive:
+    # Source on the SMB share
+    source: //SERVER/Archive
+    # Mount paths in the container with the corresponding subpath on the share
+    media:
+      mountPath: /usr/src/paperless/media
+      shareSubPath: media
+    consume:
+      mountPath: /usr/src/paperless/consume
+      shareSubPath: consume
+    export:
+      mountPath: /usr/src/paperless/export
+      shareSubPath: export
 
-  ## Redis
-  broker:
-    # The volume mounts inside the container
-    volumeMounts:
-    - mountPath: /data
-      readOnly: false
-      name: config
-      subPath: redis
+  # Database name
+  databaseName: paperless
 
-  ## Paperless-ngx
-  app:
-    # Environment variables for your setup
-    # Ref: https://docs.paperless-ngx.com/configuration/
-    env:
-    - name: USERMAP_UID
-      value: "0"
-    - name: USERMAP_GID
-      value: "0"
-    - name: POSTGRES_DB
-      value: paperless
-    - name: PAPERLESS_REDIS
-      value: redis://localhost:6379
-    - name: PAPERLESS_DBHOST
-      value: localhost
-    - name: PAPERLESS_URL
-      value: https://paperless.domain.tld
-    - name: PAPERLESS_TIME_ZONE
-      value: Europe/Amsterdam
-    - name: PAPERLESS_OCR_LANGUAGE
-      value: nld+eng
-    - name: PAPERLESS_OCR_LANGUAGES
-      value: nld
-    - name: PAPERLESS_FILENAME_FORMAT
-      value: "{ created }-{ correspondent }-{ title }"
+  # Database username
+  databaseUsername: paperless
 
-    # Secret variables for your setup
-    # Ref: https://docs.paperless-ngx.com/configuration/
-    secret:
-    - name: POSTGRES_USER
-      value: paperless
-    - name: POSTGRES_PASSWORD
-      value: Pl3@s3Ch@ng3M3!
-    - name: PAPERLESS_SECRET_KEY
-      value: SuperSecretKeyOf50Chars
-    - name: PAPERLESS_API_KEY
-      value: ApiKeyOf40Chars
+  # Database password
+  databasePassword: Pl3@s3Ch@ng3M3!
 
-    # The volume mounts inside the container
-    volumeMounts:
-    - mountPath: /usr/src/paperless/data
-      name: config
-      subPath: paperless
-    - mountPath: /usr/src/paperless/media
-      readOnly: false
-      name: archive
-      subPath: media
-    - mountPath: /usr/src/paperless/consume
-      readOnly: false
-      name: archive
-      subPath: consume
-    - mountPath: /usr/src/paperless/export
-      readOnly: false
-      name: archive
-      subPath: export
+  # Admin user credentials
+  # Automatically creates a superuser with the provided username and password
+  paperlessAdminUsername: admin
+  paperlessAdminPassword: Pl3@s3Ch@ng3M3!
+
+  # Paperless URL
+  paperlessUrl: https://paperless.example.com
+
+  # Customize the language that Paperless will attempt to use when parsing documents
+  paperlessOcrLanguage: nld+eng
+
+  # Install languages not installed by default
+  paperlessOcrLanguages: nld
+
+  # Filename format
+  paperlessFilenameFormat: "{ created }-{ correspondent }-{ title }"
+
+  # Secret key for encryption
+  paperlessSecretKey: SecretKeyOf50+Char
+
+  # Global API key
+  paperlessApiKey: ApiKeyOf40+Char
+
+  # Poll frequency (in minutes) of the `consume` folder
+  paperlessConsumerPolling: "15"
+
+  # When using a SSO provider: configuration
+  paperlessApps: ""
+  paperlessSocialAccountProviders: ""
+
+  # When using a SSO provider: disable regular login
+  paperlessDisableRegularLogin: "false"
+
+  # When using a SSO provider: redirect login to SSO
+  paperlessRedirectLoginToSso: "false"
+
+  # When using a SSO provider: URL to redirect the user to after a logout
+  paperlessLogoutRedirectUrl: "None"
 
 ingress:
   # Your domain name(s)
   domains: 
-  - domain.tld
-  # The subdomain of the domain (e.g. `my-app`)
-  # @default -- `<app.fullname>`
+    - example.com
+
+  # The subdomain of the domain (e.g. `my-app`, defaults to `app.fullname`)
   subdomainOverride: ""
-  
-# Add the persistent volumes
-volumes:
-# Config store on Longhorn
-- name: config
-  className: longhorn
-  accessModes: 
-  - ReadWriteOnce
-  storage: 3Gi
-  source: ""
-# Document store on a SMB share
-- name: archive
-  className: smb
-  accessModes: 
-  - ReadWriteMany
-  storage: 100Gi
-  source: //SERVER/Archive
 ```
 
 Finally, install the chart:

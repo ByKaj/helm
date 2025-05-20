@@ -5,6 +5,10 @@
 nameOverride: ""        # Defaults to <.Chart.Name>
 fullnameOverride: ""    # Defaults to <.Release.Name>-<.Chart.Name>
 
+global:
+  # Storage request for the config folder
+  configStorage: 1Gi
+  
 # -----------------------------------------------------------------------------
 # -- Configure Pods and Containers
 # -----------------------------------------------------------------------------
@@ -31,16 +35,16 @@ containers:
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
     # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-    - name: mqtt
-      enabled: true
-      port: 1883
-      protocol: TCP
-      ingress: true
-    - name: ws
-      enabled: true
-      port: 9001
-      protocol: TCP
-      ingress: false
+      - name: mqtt
+        enabled: true
+        port: 1883
+        protocol: TCP
+        ingress: true
+      - name: ws
+        enabled: true
+        port: 9001
+        protocol: TCP
+        ingress: false
 
     # This is to setup the liveness and readiness probes 
     # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
@@ -58,8 +62,8 @@ containers:
     # @default -- `""` (See [values.yaml])
     envUse: ""
 
-   # Secret variables to pass to the deployed container. A specific Secret is created.
-   # @default -- `[]` (See [values.yaml])
+    # Secret variables to pass to the deployed container. A specific Secret is created.
+    # @default -- `[]` (See [values.yaml])
     secret: []
 
     # Use ConfigMap from another container (key). Overrides `secret`.
@@ -68,15 +72,15 @@ containers:
 
     # Additional volumeMounts on the output Deployment definition.
     volumeMounts:
-    - mountPath: /mosquitto/config/
-      name: config
-      subPath: config
-    - mountPath: /mosquitto/data
-      name: config
-      subPath: data
-    - mountPath: /mosquitto/log
-      name: config
-      subPath: log
+      - mountPath: /mosquitto/config/
+        name: config
+        subPath: config
+      - mountPath: /mosquitto/data
+        name: config
+        subPath: data
+      - mountPath: /mosquitto/log
+        name: config
+        subPath: log
 
     resources: {}
 
@@ -118,8 +122,8 @@ serviceAccount:
 # Ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
 dnsConfig:
   options:
-  - name: ndots
-    value: "1"
+    - name: ndots
+      value: "1"
 
 # This is for setting up a service.
 # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
@@ -137,7 +141,7 @@ ingress:
 
   # Domainnames (format: - <domain>.<tld>).
   domains:
-  - domain.tld
+    - example.com
 
   # Override the subdomain.
   # @default -- '""' (See [values.yaml])
@@ -146,7 +150,7 @@ ingress:
   # Entry point of the route.
   # @default -- 'websecure' (See [values.yaml])
   entryPoints:
-  - mqtts
+    - mqtts
 
   # Attach middlewares to ingress route
   # These need to be present within the namespace
@@ -171,14 +175,14 @@ credentials: {}
   #   namespace: default
 
 # Additional volumes on the output Deployment definition.
-# Longhorn as storage required.
+# Longhorn as storage required for persistent config store.
 volumes:
-- name: config
-  className: longhorn
-  accessModes: 
-  - ReadWriteOnce
-  storage: 1Gi
-  source: ""
+  config:
+    className: longhorn
+    accessModes: 
+      - ReadWriteOnce
+    storage: "{{ .Values.global.configStorage }}"
+    source: ""
 
 # -----------------------------------------------------------------------------
 # -- Scheduling, Preemption and Eviction

@@ -7,54 +7,46 @@
 
 **Homepage:** <https://www.bazarr.media>
 
+## Prerequisites
+This application requires:
+- A volume in Longhorn named `bazarr-config`;
+- A secret with a wildcard certificate in the same namespace named `example-com-tls` (change to your domainname);
+- The SMB credentials stored in the secret `smb-credentials` in the `default` namespace;
+- The same volume mounts to SMB shares as [Sonarr](https://github.com/ByKaj/helm/tree/main/charts/sonarr) and [Radarr](https://github.com/ByKaj/helm/tree/main/charts/radarr).
+
 ## Usage
-Make a local `values.yaml` file with the following content and change the values to match your environment.
+Make a `values.yaml` file with the following (minimal) content and change the values to match your environment. For all the possible configuration overrides see [values.yaml](https://github.com/ByKaj/helm/blob/main/charts/bazarr/values.yaml).
 ```yaml
 global:
   # Local timezone
   timezone: Europe/Amsterdam
 
-containers:
-  app:
-    # The volume mounts inside the container
-    # The `name` references a volume in `volumes`
-    volumeMounts:
-    - mountPath: /config
-      readOnly: false
-      name: config
-    - mountPath: /movies
-      subPath: Movies
-      readOnly: false
-      name: media
-    - mountPath: /tv
-      subPath: Series
-      readOnly: false
-      name: media
+  # Storage request for the config folder
+  configStorage: 1Gi
+
+  # Source and target for your movies folder
+  movies:
+    # Mount path in the container
+    mountPath: /movies
+    # Source on the SMB share
+    source: //SERVER/Media
+    subPath: Movies
+
+  # Source and target for your series folder
+  series:
+    # Mount path in the container
+    mountPath: /tv
+    # Source on the SMB share
+    source: //SERVER/Media
+    subPath: Series
 
 ingress:
   # Your domain name(s)
   domains: 
-  - domain.tld
-  # The subdomain of the domain (e.g. `my-app`)
-  # @default -- `<app.fullname>`
+    - example.com
+
+  # The subdomain of the domain (e.g. `my-app`, defaults to `app.fullname`)
   subdomainOverride: ""
-  
-# Add the persistent volumes
-volumes:
-  # Config store on Longhorn
-  - name: config
-    className: longhorn
-    accessModes: 
-    - ReadWriteOnce
-    storage: 3Gi
-    source: ""
-  # Media on a SMB share
-  - name: media
-    className: smb
-    accessModes: 
-    - ReadWriteMany
-    storage: 100Gi
-    source: //SERVER/Media
 ```
 
 Finally, install the chart:

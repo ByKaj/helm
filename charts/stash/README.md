@@ -7,48 +7,56 @@
 
 **Homepage:** <https://github.com/stash/stash>
 
+## Prerequisites
+This application requires:
+- A volume in Longhorn named `stash-config`;
+- A secret with a wildcard certificate in the same namespace named `example-com-tls` (change to your domainname);
+- The SMB credentials stored in the secret `smb-credentials` in the `default` namespace.
+
 ## Usage
-Make a local `values.yaml` file with the following content and change the values to match your environment.
+Make a `values.yaml` file with the following (minimal) content and change the values to match your environment. For all the possible configuration overrides see [values.yaml](https://github.com/ByKaj/helm/blob/main/charts/stash/values.yaml).
 ```yaml
 global:
   # Local timezone
   timezone: Europe/Amsterdam
 
-  # Container mount paths:
-  # Where your 'media' volume is mounted
-  pathData: /data/
-  # Where to store generated content (screenshots, previews, transcodes, sprites)
-  pathGenerated: /generated/
-  # This is where your stash's metadata lives
-  pathMetadata: /metadata/
-  # Any other cache content
-  pathCache: /cache/
+  # Storage request for the config folder
+  configStorage: 5Gi
+  
+  # Source and target for your config folder
+  config:
+    # Mount paths in the container with the corresponding subpath on the share
+    blobs:
+      mountPath: /blobs
+      subPath: blobs
+    cache:
+      mountPath: /cache
+      subPath: cache
+    config:
+      mountPath: /root/.stash
+      subPath: config
+    generated:
+      mountPath: /generated
+      subPath: generated
+    metadata:
+      mountPath: /metadata
+      subPath: metadata
+
+  # Source and target for your media folder
+  media:
+    # Mount path in the container
+    mountPath: /data
+    # Source on the SMB share
+    source: //SERVER/Media
+    subPath: ""
 
 ingress:
   # Your domain name(s)
   domains: 
-  - domain.tld
+    - example.com
 
-  # The subdomain of the domain (e.g. `my-app`)
-  # @default -- `<app.fullname>`
+  # The subdomain of the domain (e.g. `my-app`, defaults to `app.fullname`)
   subdomainOverride: ""
-  
-# Add the persistent volumes
-volumes:
-  # Config store on Longhorn
-  - name: config
-    className: longhorn
-    accessModes: 
-      - ReadWriteOnce
-    storage: 5Gi
-    source: ""
-  # Media on a SMB share
-  - name: media
-    className: smb
-    accessModes: 
-      - ReadWriteMany
-    storage: 100Gi
-    source: //SERVER/Media
 ```
 
 Finally, install the chart:

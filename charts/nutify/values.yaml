@@ -5,6 +5,18 @@
 nameOverride: ""        # Defaults to <.Chart.Name>
 fullnameOverride: ""    # Defaults to <.Release.Name>-<.Chart.Name>
 
+global:
+  # Local timezone
+  # @default -- "Europe/Amsterdam"
+  timezone: Europe/Amsterdam
+
+  # Storage request for the config folder
+  configStorage: 3Gi
+
+  # Secret key used for encryption
+  # @default -- "SecretKeyOf32+Char"
+  secretKey: SecretKeyOf32+Char
+
 # -----------------------------------------------------------------------------
 # -- Configure Pods and Containers
 # -----------------------------------------------------------------------------
@@ -33,12 +45,12 @@ containers:
     # This is for setting up a service
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
-    # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-    - name: http
-      enabled: true
-      port: 5050
-      protocol: TCP
-      ingress: true
+      # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
+      - name: http
+        enabled: true
+        port: 5050
+        protocol: TCP
+        ingress: true
 
     # This is to setup the liveness and readiness probes 
     # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
@@ -60,17 +72,19 @@ containers:
 
     # Environment variables to pass to the deployed container. A specific ConfigMap is created.
     # @default -- `[]` (See [values.yaml])
-    env: []
+    env:
+      - name: TZ
+        value: "{{ .Values.global.timezone }}"
     
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
     envUse: ""
 
-   # Secret variables to pass to the deployed container. A specific Secret is created.
-   # @default -- `[]` (See [values.yaml])
+    # Secret variables to pass to the deployed container. A specific Secret is created.
+    # @default -- `[]` (See [values.yaml])
     secret:
-    - name: SECRET_KEY
-      value: Pl3@s3Ch@ng3M3!
+      - name: SECRET_KEY
+        value: "{{ .Values.global.secretKey }}"
 
     # Use ConfigMap from another container (key). Overrides `secret`.
     # @default -- `""` (See [values.yaml])
@@ -78,30 +92,24 @@ containers:
 
     # Additional volumeMounts on the output Deployment definition.
     volumeMounts:
-    - mountPath: /app/nutify/logs
-      subPath: logs
-      readOnly: false
-      name: config
-    - mountPath: /app/nutify/instance
-      subPath: instance
-      readOnly: false
-      name: config
-    - mountPath: /app/ssl
-      subPath: ssl
-      readOnly: false
-      name: config
-    - mountPath: /etc/nut
-      subPath: etc/nut
-      readOnly: false
-      name: config
+      - mountPath: /app/nutify/logs
+        subPath: logs
+        readOnly: false
+        name: config
+      - mountPath: /app/nutify/instance
+        subPath: instance
+        readOnly: false
+        name: config
+      - mountPath: /app/ssl
+        subPath: ssl
+        readOnly: false
+        name: config
+      - mountPath: /etc/nut
+        subPath: etc/nut
+        readOnly: false
+        name: config
 
     resources: {}
-      #limits:
-      #  cpu: 12m
-      #  memory: 500Mi
-      #requests:
-      #  cpu: 11m
-      #  memory: 400Mi
 
 # This is for the secrets for pulling an image from a private repository
 # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -141,8 +149,8 @@ serviceAccount:
 # Ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
 dnsConfig:
   options:
-  - name: ndots
-    value: "1"
+    - name: ndots
+      value: "1"
 
 # This is for setting up a service.
 # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
@@ -158,21 +166,22 @@ ingress:
   # @default -- 'IngressRoute' (See [values.yaml])
   kind: IngressRoute
 
-  # Root domain (<domain>.<tld>).
-  rootDomain: domain.tld
+  # Domainnames (format: - <domain>.<tld>).
+  domains:
+    - example.com
 
   # Override the subdomain.
   # @default -- '""' (See [values.yaml])
-  subDomainOverride: ""
+  subdomainOverride: ""
 
   # Entry point of the route.
   # @default -- 'websecure' (See [values.yaml])
   entryPoints:
-  - websecure
+    - websecure
 
   # Attach middlewares to ingress route.
   middlewares:
-  - secure-headers
+    - secure-headers
 
   # The TLS secretName for the certificate
   tlsSecret: ""
@@ -190,14 +199,14 @@ credentials: {}
   #   namespace: default
 
 # Additional volumes on the output Deployment definition.
-# Longhorn as storage required.
+# Longhorn as storage required for persistent config store.
 volumes:
-- name: config
-  className: longhorn
-  accessModes: 
-  - ReadWriteOnce
-  storage: 3Gi
-  source: ""
+  config:
+    className: longhorn
+    accessModes: 
+      - ReadWriteOnce
+    storage: "{{ .Values.global.configStorage }}"
+    source: ""
 
 # -----------------------------------------------------------------------------
 # -- Scheduling, Preemption and Eviction
@@ -222,7 +231,3 @@ replicaCount: 1
 # Ref: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:
   enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80

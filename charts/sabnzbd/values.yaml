@@ -5,6 +5,23 @@
 nameOverride: ""        # Defaults to <.Chart.Name>
 fullnameOverride: ""    # Defaults to <.Release.Name>-<.Chart.Name>
 
+global:
+  # Local timezone
+  # @default -- "Europe/Amsterdam"
+  timezone: Europe/Amsterdam
+
+  # Storage request for the config folder
+  configStorage: 1Gi
+
+  # Source and target for your downloads folder
+  downloads:
+    # Mount path in the container
+    # @default -- "/downloads"
+    mountPath: /downloads
+    # Source on the SMB share
+    source: //SERVER/Downloads
+    subPath: ""
+
 # -----------------------------------------------------------------------------
 # -- Configure Pods and Containers
 # -----------------------------------------------------------------------------
@@ -30,12 +47,12 @@ containers:
     # This is for setting up a service
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
-    # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-    - name: http
-      enabled: true
-      port: 8080
-      protocol: TCP
-      ingress: true
+      # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
+      - name: http
+        enabled: true
+        port: 8080
+        protocol: TCP
+        ingress: true
 
     # This is to setup the liveness and readiness probes 
     # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
@@ -58,19 +75,19 @@ containers:
     # Environment variables to pass to the deployed container. A specific ConfigMap is created.
     # @default -- `[]` (See [values.yaml])
     env:
-    - name: TZ
-      value: Europe/Amsterdam
-    - name: PUID
-      value: "0"
-    - name: PGID
-      value: "0"
+      - name: TZ
+        value: "{{ .Values.global.timezone }}"
+      - name: PUID
+        value: "0"
+      - name: PGID
+        value: "0"
     
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
     envUse: ""
 
-   # Secret variables to pass to the deployed container. A specific Secret is created.
-   # @default -- `[]` (See [values.yaml])
+    # Secret variables to pass to the deployed container. A specific Secret is created.
+    # @default -- `[]` (See [values.yaml])
     secret: []
 
     # Use ConfigMap from another container (key). Overrides `secret`.
@@ -79,15 +96,11 @@ containers:
 
     # Additional volumeMounts on the output Deployment definition.
     volumeMounts:
-    - mountPath: /config
-      readOnly: false
-      name: config
-    - mountPath: /downloads
-      readOnly: false
-      name: downloads
-    - mountPath: /incomplete-downloads
-      readOnly: false
-      name: downloads
+      - name: config
+        mountPath: /config
+      - name: downloads
+        mountPath: "{{ .Values.global.downloads.mountPath }}"
+        subPath: "{{ .Values.global.downloads.subPath }}"
 
     resources: {}
 
@@ -129,8 +142,8 @@ serviceAccount:
 # Ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
 dnsConfig:
   options:
-  - name: ndots
-    value: "1"
+    - name: ndots
+      value: "1"
 
 # This is for setting up a service.
 # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
@@ -148,7 +161,7 @@ ingress:
 
   # Domainnames (format: - <domain>.<tld>).
   domains:
-  - domain.tld
+    - example.com
 
   # Override the subdomain.
   # @default -- '""' (See [values.yaml])
@@ -157,13 +170,13 @@ ingress:
   # Entry point of the route.
   # @default -- 'websecure' (See [values.yaml])
   entryPoints:
-  - websecure
+    - websecure
 
   # Attach middlewares to ingress route
   # These need to be present within the namespace
   # @default -- `secure-headers` (See [values.yaml])
   middlewares:
-  - secure-headers
+    - secure-headers
 
   # The TLS secretName for the certificate 
   # Defaults to the Traefik wildcard certificate when ommited
@@ -183,20 +196,20 @@ credentials:
     namespace: default
 
 # Additional volumes on the output Deployment definition.
-# Longhorn as storage required.
+# Longhorn as storage required for persistent config store.
 volumes:
-- name: config
-  className: longhorn
-  accessModes: 
-  - ReadWriteOnce
-  storage: 1Gi
-  source: ""
-- name: downloads
-  className: smb
-  accessModes: 
-  - ReadWriteMany
-  storage: 100Gi
-  source: //SERVER/Downloads
+  config:
+    className: longhorn
+    accessModes: 
+      - ReadWriteOnce
+    storage: "{{ .Values.global.configStorage }}"
+    source: ""
+  downloads:
+    className: smb
+    accessModes: 
+      - ReadWriteMany
+    storage: 100Gi
+    source: "{{ .Values.global.downloads.source }}"
 
 # -----------------------------------------------------------------------------
 # -- Scheduling, Preemption and Eviction

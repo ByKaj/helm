@@ -7,22 +7,20 @@
 
 **Homepage:** <https://github.com/fosrl/newt>
 
-## Usage
-Make a local `values.yaml` file with the following content and change the values to match your environment.
-```yaml
-containers:
-  app:
-    # The endpoint to your Pangolin server and Site ID
-    env:
-    - name: PANGOLIN_ENDPOINT
-      value: https://pangolin.domain.tld
-    - name: NEWT_ID
-      value: ChangeMe
+## Prerequisites
+This application requires:
+- A working installation of [Pangolin](https://fossorial.io) on a remote VPS.
 
-    # The secret key
-    secret:
-    - name: NEWT_SECRET
-      value: ChangeMe
+## Usage
+Make a `values.yaml` file with the following (minimal) content and change the values to match your environment. For all the possible configuration overrides see [values.yaml](https://github.com/ByKaj/helm/blob/main/charts/newt/values.yaml).
+```yaml
+global:
+  # The endpoint for Pangolin
+  pangolinEndpoint: https://pangolin.example.com
+
+  # Tunnel ID and secret (shown when creating a tunnel in Pangolin)
+  newtId: ""
+  newtSecret: ""
 ```
 
 Finally, install the chart:

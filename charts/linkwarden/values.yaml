@@ -5,6 +5,50 @@
 nameOverride: ""        # Defaults to <.Chart.Name>
 fullnameOverride: ""    # Defaults to <.Release.Name>-<.Chart.Name>
 
+global:
+  # Local timezone
+  # @default -- "Europe/Amsterdam"
+  timezone: Europe/Amsterdam
+
+  # Storage request for the config folder
+  configStorage: 10Gi
+
+  # Database name
+  # @default -- "linkwarden"
+  databaseName: linkwarden
+
+  # Database username
+  # @default -- "linkwarden"
+  databaseUsername: linkwarden
+
+  # Database password
+  # @default -- "Pl3@s3Ch@ng3M3!"
+  databasePassword: Pl3@s3Ch@ng3M3!
+
+  # Master key for Meilisearch
+  # @default -- "SecretKeyOf40+Chars"
+  meiliMasterKey: SecretKeyOf40+Chars
+
+  # Base URL for Linkwarden
+  # @default -- "https://linkwarden.example.com"
+  linkwardenUrl: https://linkwarden.example.com
+
+  # Secret key for encryption
+  # @default -- "SecretKeyOf64+Chars"
+  linkwardenSecret: SecretKeyOf64+Chars
+
+  # S3 configuration for storage
+  linkwardenS3Endpoint: https://s3.amazonaws.com
+  linkwardenS3BucketName: my-linkwarden-bucket
+  linkwardenS3Region: eu-central-1
+  linkwardenS3AccountKey: ""
+  linkwardenS3SecretKey: ""
+
+  # Ollama model for AI tagging
+  # @default -- "phi3:mini-4k"
+  # Ref: https://docs.linkwarden.app/self-hosting/ai-worker
+  ollamaModel: "phi3:mini-4k"
+
 # -----------------------------------------------------------------------------
 # -- Configure Pods and Containers
 # -----------------------------------------------------------------------------
@@ -31,11 +75,11 @@ containers:
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
     # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-    - name: psql
-      enabled: false
-      port: 5432
-      protocol: TCP
-      ingress: false
+      - name: psql
+        enabled: false
+        port: 5432
+        protocol: TCP
+        ingress: false
 
     # This is to setup the liveness and readiness probes 
     # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
@@ -48,10 +92,10 @@ containers:
     # Environment variables to pass to the deployed container. A specific ConfigMap is created.
     # @default -- `[]` (See [values.yaml])
     env:
-    - name: PG_TZ
-      value: Europe/Amsterdam
-    - name: POSTGRES_DB
-      value: linkwarden
+      - name: PG_TZ
+        value: "{{ .Values.global.timezone }}"
+      - name: POSTGRES_DB
+        value: "{{ .Values.global.databaseName }}"
     
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
@@ -60,10 +104,10 @@ containers:
    # Secret variables to pass to the deployed container. A specific Secret is created.
    # @default -- `[]` (See [values.yaml])
     secret:
-    - name: POSTGRES_USER
-      value: linkwarden
-    - name: POSTGRES_PASSWORD
-      value: Pl3@s3Ch@ng3M3!
+      - name: POSTGRES_USER
+        value: "{{ .Values.global.databaseUsername }}"
+      - name: POSTGRES_PASSWORD
+        value: "{{ .Values.global.databasePassword }}"
 
     # Use ConfigMap from another container (key). Overrides `secret`.
     # @default -- `""` (See [values.yaml])
@@ -71,10 +115,10 @@ containers:
 
     # Additional volumeMounts on the output Deployment definition.
     volumeMounts:
-    - mountPath: /var/lib/postgresql/data
-      readOnly: false
-      name: config
-      subPath: postgresql
+      - mountPath: /var/lib/postgresql/data
+        readOnly: false
+        name: config
+        subPath: postgresql
 
     resources: {}
 
@@ -99,11 +143,11 @@ containers:
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
     # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-    - name: http
-      enabled: false
-      port: 7700
-      protocol: TCP
-      ingress: false
+      - name: http
+        enabled: false
+        port: 7700
+        protocol: TCP
+        ingress: false
 
     # This is to setup the liveness and readiness probes 
     # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
@@ -116,10 +160,10 @@ containers:
     # Environment variables to pass to the deployed container. A specific ConfigMap is created.
     # @default -- `[]` (See [values.yaml])
     env:
-    - name: MEILI_NO_ANALYTICS
-      value: "true"
-    - name: MEILI_ENV
-      value: production
+      - name: MEILI_NO_ANALYTICS
+        value: "true"
+      - name: MEILI_ENV
+        value: production
     
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
@@ -128,8 +172,8 @@ containers:
    # Secret variables to pass to the deployed container. A specific Secret is created.
    # @default -- `[]` (See [values.yaml])
     secret:
-    - name: MEILI_MASTER_KEY
-      value: Pl3@s3Ch@ng3M3!
+      - name: MEILI_MASTER_KEY
+        value: "{{ .Values.global.meiliMasterKey }}"
 
     # Use ConfigMap from another container (key). Overrides `secret`.
     # @default -- `""` (See [values.yaml])
@@ -137,10 +181,10 @@ containers:
 
     # Additional volumeMounts on the output Deployment definition.
     volumeMounts:
-    - mountPath: /meili_data
-      readOnly: false
-      name: config
-      subPath: meilisearch
+      - mountPath: /meili_data
+        readOnly: false
+        name: config
+        subPath: meilisearch
 
     resources: {}
 
@@ -165,11 +209,11 @@ containers:
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
     # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-    - name: http
-      enabled: false
-      port: 11434
-      protocol: TCP
-      ingress: false
+      - name: http
+        enabled: false
+        port: 11434
+        protocol: TCP
+        ingress: false
 
     # This is to setup the liveness and readiness probes 
     # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
@@ -182,8 +226,8 @@ containers:
     # Environment variables to pass to the deployed container. A specific ConfigMap is created.
     # @default -- `[]` (See [values.yaml])
     env:
-    - name: TZ
-      value: Europe/Amsterdam
+      - name: TZ
+        value: "{{ .Values.global.timezone }}"
     
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
@@ -199,9 +243,9 @@ containers:
 
     # Additional volumeMounts on the output Deployment definition.
     volumeMounts:
-    - mountPath: /root/.ollama
-      name: config
-      subPath: ollama
+      - mountPath: /root/.ollama
+        name: config
+        subPath: ollama
 
     resources: {}
 
@@ -225,12 +269,12 @@ containers:
     # This is for setting up a service
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
-    # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-    - name: http
-      enabled: true
-      port: 3000
-      protocol: TCP
-      ingress: true
+      # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
+      - name: http
+        enabled: true
+        port: 3000
+        protocol: TCP
+        ingress: true
 
     # This is to setup the liveness and readiness probes 
     # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
@@ -252,41 +296,43 @@ containers:
 
     # Environment variables to pass to the deployed container. A specific ConfigMap is created.
     # @default -- `[]` (See [values.yaml])
+    # Ref: https://docs.linkwarden.app/self-hosting/environment-variables
     env:
-    - name: NEXTAUTH_URL
-      value: https://linkwarden.<domain>.<tld>/api/v1/auth
-    - name: MEILI_HOST
-      value: http://localhost:7700
-    - name: SPACES_ENDPOINT
-      value: <S3_ENDPOINT_URL>
-    - name: SPACES_BUCKET_NAME
-      value: <S3_BUCKET_NAME>
-    - name: SPACES_REGION
-      value: <S3_REGION>
-    - name: SPACES_FORCE_PATH_STYLE
-      value: "true"
-    - name: BASE_URL
-      value: https://linkwarden.<domain>.<tld>
-    - name: NEXT_PUBLIC_OLLAMA_ENDPOINT_URL
-      value: http://localhost:11434
-    - name: OLLAMA_MODEL
-      value: "phi3:mini-4k"
+      - name: NEXTAUTH_URL
+        value: "{{ .Values.global.linkwardenUrl }}/api/v1/auth"
+      - name: MEILI_HOST
+        value: http://localhost:7700
+      - name: SPACES_ENDPOINT
+        value: "{{ .Values.global.linkwardenS3Endpoint }}"
+      - name: SPACES_BUCKET_NAME
+        value: "{{ .Values.global.linkwardenS3BucketName }}"
+      - name: SPACES_REGION
+        value: "{{ .Values.global.linkwardenS3Region }}"
+      - name: SPACES_FORCE_PATH_STYLE
+        value: "true"
+      - name: BASE_URL
+        value: "{{ .Values.global.linkwardenUrl }}"
+      - name: NEXT_PUBLIC_OLLAMA_ENDPOINT_URL
+        value: http://localhost:11434
+      - name: OLLAMA_MODEL
+        value: "{{ .Values.global.ollamaModel }}"
 
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
     envUse: ""
 
-   # Secret variables to pass to the deployed container. A specific Secret is created.
-   # @default -- `[]` (See [values.yaml])
+    # Secret variables to pass to the deployed container. A specific Secret is created.
+    # @default -- `[]` (See [values.yaml])
+    # Ref: https://docs.linkwarden.app/self-hosting/environment-variables
     secret:
-    - name: DATABASE_URL
-      value: postgresql://<DB_USER>:<DB_PASSWORD>@localhost:5432/<DB>
-    - name: NEXTAUTH_SECRET
-      value: Pl3@s3Ch@ng3M3!
-    - name: SPACES_KEY
-      value: <S3_KEY>
-    - name: SPACES_SECRET
-      value: <S3_SECRET>
+      - name: DATABASE_URL
+        value: "postgresql://{{ .Values.global.databaseUsername }}:{{ .Values.global.databasePassword }}@localhost:5432/{{ .Values.global.databaseName }}"
+      - name: NEXTAUTH_SECRET
+        value: "{{ .Values.global.linkwardenSecret }}"
+      - name: SPACES_KEY
+        value: "{{ .Values.global.linkwardenS3AccountKey }}"
+      - name: SPACES_SECRET
+        value: "{{ .Values.global.linkwardenS3SecretKey }}"
 
     # Use ConfigMap from another container (key). Overrides `secret`.
     # @default -- `""` (See [values.yaml])
@@ -335,8 +381,8 @@ serviceAccount:
 # Ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
 dnsConfig:
   options:
-  - name: ndots
-    value: "1"
+    - name: ndots
+      value: "1"
 
 # This is for setting up a service.
 # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
@@ -354,7 +400,7 @@ ingress:
 
   # Domainnames (format: - <domain>.<tld>).
   domains:
-  - domain.tld
+    - example.com
 
   # Override the subdomain.
   # @default -- '""' (See [values.yaml])
@@ -363,13 +409,13 @@ ingress:
   # Entry point of the route.
   # @default -- 'websecure' (See [values.yaml])
   entryPoints:
-  - websecure
+    - websecure
 
   # Attach middlewares to ingress route
   # These need to be present within the namespace
   # @default -- `secure-headers` (See [values.yaml])
   middlewares:
-  - secure-headers
+    - secure-headers
 
   # The TLS secretName for the certificate 
   # Defaults to the Traefik wildcard certificate when ommited
@@ -389,14 +435,14 @@ credentials: {}
   #   namespace: default
 
 # Additional volumes on the output Deployment definition.
-# Longhorn as storage required.
+# Longhorn as storage required for persistent config store.
 volumes:
-- name: config
-  className: longhorn
-  accessModes: 
-  - ReadWriteOnce
-  storage: 10Gi
-  source: ""
+  config:
+    className: longhorn
+    accessModes: 
+      - ReadWriteOnce
+    storage: "{{ .Values.global.configStorage }}"
+    source: ""
 
 # -----------------------------------------------------------------------------
 # -- Scheduling, Preemption and Eviction

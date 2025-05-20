@@ -1,10 +1,10 @@
 {{- if .Values.volumes -}}
-{{- range .Values.volumes }}
+{{- range $key, $volume := .Values.volumes }}
 {{- $name := "" -}}
-{{- if eq (toString .className) "longhorn" -}}
-  {{- $name = ((cat (include "app.fullname" $) "-" .name "-lgn") | nospace) -}}
-{{- else if eq (toString .className) "smb" -}}
-  {{- $name = ((cat (include "app.fullname" $) "-" .name "-smb") | nospace) -}}
+{{- if (eq $volume.className "longhorn") -}}
+  {{- $name = (cat (include "app.fullname" $) "-" $key "-lgn" | nospace) -}}
+{{- else if (eq $volume.className "smb") -}}
+  {{- $name = (cat (include "app.fullname" $) "-" $key "-smb" | nospace) -}}
 {{- end -}}
 ---
 # ------------------------------
@@ -19,17 +19,17 @@ metadata:
     {{- include "app.labels" $ | nindent 4 }}
 spec:
   capacity:
-    storage: {{ .storage }}
+    storage: {{ tpl $volume.storage $ }}
   volumeMode: Filesystem
-  {{- with .accessModes }}
+  {{- with $volume.accessModes }}
   accessModes:
     {{- range . }}
     - {{ . }}
     {{- end }}
   {{- end }}
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: {{ .className }}
-  {{- if eq (toString .className) "longhorn" }}
+  storageClassName: {{ $volume.className }}
+  {{- if (eq $volume.className "longhorn") }}
   csi:
     driver: driver.longhorn.io
     readOnly: false
@@ -37,12 +37,12 @@ spec:
     volumeAttributes:
       numberOfReplicas: '3'
       staleReplicaTimeout: '2880'
-  {{- else if eq (toString .className) "smb" }}
+  {{- else if (eq $volume.className "smb") }}
   csi:
     driver: smb.csi.k8s.io
     readOnly: false
     volumeAttributes:
-      source: {{ .source }}
+      source: {{ tpl $volume.source $ }}
     nodeStageSecretRef:
       name: {{ required ".credentials.smb.secret not found: SMB credentials secret not defined" $.Values.credentials.smb.secret }}
       namespace: {{ required ".credentials.smb.namespace not found: SMB credentials namespace not defined" $.Values.credentials.smb.namespace }}

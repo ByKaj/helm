@@ -1,16 +1,24 @@
 {{ include "app.name" $ | title }} has been installed!
-{{- if .Values.ingress.enabled }}
-{{ if (eq .Values.ingress.kind "IngressRoute") }}
-Browse to https://{{ coalesce .Values.ingress.subDomainOverride (include "app.fullname" .) }}.{{ .Values.ingress.rootDomain }} to use your application.
-{{ end }}
-Make sure to update your DNS to point `{{ coalesce .Values.ingress.subDomainOverride (include "app.fullname" .) }}.{{ .Values.ingress.rootDomain }}` to the IP of your Load Balancer where Traefik is listening.
+{{ if .Values.ingress.enabled }}
+When the deployment is ready (give it a moment), your application will be available on:
+{{- range $domain := .Values.ingress.domains }}
+- {{ if (eq $.Values.ingress.kind "IngressRoute") }}https://{{ end }}{{ coalesce $.Values.ingress.subdomainOverride (include "app.fullname" $) }}.{{ $domain }}
 {{- end }}
+
+Make sure to update your DNS to make the domains resolve to the IP of your Load Balancer where Traefik is listening.
+{{- end }}
+
+To check the deployment status, run the following command:
+```
+kubectl get deployments --namespace {{ .Release.Namespace }}
+```
 
 For more information about:
 {{- if .Chart.Home }}
 - the application: {{ .Chart.Home }}
 {{- end }}
-- the chart: https://github.com/bykaj/helm/tree/main/charts/{{ .Chart.Name }}
+- this chart: https://github.com/ByKaj/helm/tree/main/charts/{{ .Chart.Name }}
+- how-to guides: https://bykaj.com (coming soon)
 
 Thanks!
 {{- range .Chart.Maintainers }}

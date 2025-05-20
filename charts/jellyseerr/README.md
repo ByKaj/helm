@@ -7,43 +7,31 @@
 
 **Homepage:** <https://docs.jellyseerr.dev>
 
-## Usage
-Make a local `values.yaml` file with the following content and change the values to match your environment.
-```yaml
-containers:
-  app:
-    # Your local timezone and log level
-    env:
-    - name: TZ
-      value: Europe/Amsterdam
-    - name: PORT
-      value: "5055"
-    - name: LOG_LEVEL
-      value: info
+## Prerequisites
+This application requires:
+- A volume in Longhorn named `jellyseerr-config`;
+- A secret with a wildcard certificate in the same namespace named `example-com-tls` (change to your domainname).
 
-    # The volume mounts inside the container
-    volumeMounts:
-    - mountPath: /app/config
-      readOnly: false
-      name: config
+## Usage
+Make a `values.yaml` file with the following (minimal) content and change the values to match your environment. For all the possible configuration overrides see [values.yaml](https://github.com/ByKaj/helm/blob/main/charts/jellyseerr/values.yaml).
+```yaml
+global:
+  # Local timezone
+  timezone: Europe/Amsterdam
+
+  # Storage request for the config folder
+  configStorage: 1Gi
+  
+  # Log level
+  logLevel: info
 
 ingress:
   # Your domain name(s)
   domains: 
-  - domain.tld
-  # The subdomain of the domain (e.g. `my-app`)
-  # @default -- `<app.fullname>`
+    - example.com
+
+  # The subdomain of the domain (e.g. `my-app`, defaults to `app.fullname`)
   subdomainOverride: ""
-  
-# Add the persistent volumes
-volumes:
-# Config store on Longhorn
-- name: config
-  className: longhorn
-  accessModes: 
-  - ReadWriteOnce
-  storage: 1Gi
-  source: ""
 ```
 
 Finally, install the chart:

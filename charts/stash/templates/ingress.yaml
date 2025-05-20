@@ -38,11 +38,11 @@ spec:
   routes:
     {{- with $.Values.ingress }}
     {{- $hostname := (cat (coalesce $subdomainOverride $appFullname) "." $domain | nospace) -}}
-    {{- if (eq $kind "IngressRoute") }}
+    {{- if (eq $kind "IngressRouteTCP") }}
+    - match: HostSNI(`{{ $hostname }}`)
+    {{- else }}
     - match: Host(`{{ $hostname }}`)
       kind: Rule
-    {{- else if (eq $kind "IngressRouteTCP") }}
-    - match: HostSNI(`{{ $hostname }}`)
     {{- end }}
       services:
         {{- range $containerKey, $containerValues := $containers }}
@@ -53,9 +53,11 @@ spec:
         {{- end }}
         {{- end }}
         {{- end }}
-      {{- range $middlewares }}
+      {{- with $middlewares }}
       middlewares:
+        {{- range . }}
         - name: {{ . }}
+        {{- end }}
       {{- end }}
     {{- end }}
   {{- if $.Values.ingress.tlsSecret }}

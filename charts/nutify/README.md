@@ -7,25 +7,31 @@
 
 **Homepage:** <https://github.com/DartSteven/Nutify>
 
+## Prerequisites
+This application requires:
+- A volume in Longhorn named `nutify-config`;
+- A secret with a wildcard certificate in the same namespace named `example-com-tls` (change to your domainname);
+
 ## Usage
-Make a local `values.yaml` file with the following content and change the values to match your environment.
+Make a `values.yaml` file with the following (minimal) content and change the values to match your environment. For all the possible configuration overrides see [values.yaml](https://github.com/ByKaj/helm/blob/main/charts/nutify/values.yaml).
 ```yaml
-containers:
-  app:
-    # Secret key for password encryption (use 32+ chars)
-    secret:
-    - name: SECRET_KEY
-      value: Pl3@s3Ch@ng3M3!
+global:
+  # Local timezone
+  timezone: Europe/Amsterdam
+
+  # Storage request for the config folder
+  configStorage: 3Gi
+  
+  # Secret key used for encryption
+  secretKey: SecretKeyOf32+Char
 
 ingress:
-  # Your domain name
-  rootDomain: domain.tld
-  # The subdomain of the domain (e.g. `my-app`)
-  # @default -- `<app.fullname>`
-  subDomainOverride: ""
-  # The secret containing the wildcard certificate
-  # @default -- `domain-tld-tls`
-  tlsSecret: ""
+  # Your domain name(s)
+  domains: 
+    - example.com
+
+  # The subdomain of the domain (e.g. `my-app`, defaults to `app.fullname`)
+  subdomainOverride: ""
 ```
 
 Finally, install the chart:

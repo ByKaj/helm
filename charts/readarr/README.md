@@ -7,64 +7,45 @@
 
 **Homepage:** <https://readarr.com>
 
-## Usage
-Make a local `values.yaml` file with the following content and change the values to match your environment.
-```yaml
-containers:
-  app:
-    # Your local timezone and the user/group ID's (default: "0")
-    env:
-    - name: TZ
-      value: Europe/Amsterdam
-    - name: PUID
-      value: "0"
-    - name: PGID
-      value: "0"
+## Prerequisites
+This application requires:
+- A volume in Longhorn named `readarr-config`;
+- A secret with a wildcard certificate in the same namespace named `example-com-tls` (change to your domainname);
+- The SMB credentials stored in the secret `smb-credentials` in the `default` namespace.
 
-    # The volume mounts inside the container
-    volumeMounts:
-    - mountPath: /config
-      readOnly: false
-      name: config
-    - mountPath: /downloads
-      readOnly: false
-      name: downloads
-    - mountPath: /books
-      readOnly: false
-      name: media
-      subPath: Books
+## Usage
+Make a `values.yaml` file with the following (minimal) content and change the values to match your environment. For all the possible configuration overrides see [values.yaml](https://github.com/ByKaj/helm/blob/main/charts/readarr/values.yaml).
+```yaml
+global:
+  # Local timezone
+  timezone: Europe/Amsterdam
+
+  # Storage request for the config folder
+  configStorage: 5Gi
+
+  # Source and target for your books folder
+  books:
+    # Mount path in the container
+    mountPath: /books
+    # Source on the SMB share
+    source: //SERVER/Media
+    subPath: Books
+
+  # Source and target for your downloads folder
+  downloads:
+    # Mount path in the container
+    mountPath: /downloads
+    # Source on the SMB share
+    source: //SERVER/Downloads
+    subPath: ""
 
 ingress:
   # Your domain name(s)
   domains: 
-  - domain.tld
-  # The subdomain of the domain (e.g. `my-app`)
-  # @default -- `<app.fullname>`
+    - example.com
+
+  # The subdomain of the domain (e.g. `my-app`, defaults to `app.fullname`)
   subdomainOverride: ""
-  
-# Add the persistent volumes
-volumes:
-# Config store on Longhorn
-- name: config
-  className: longhorn
-  accessModes: 
-  - ReadWriteOnce
-  storage: 5Gi
-  source: ""
-# Downloads on a SMB share
-- name: downloads
-  className: smb
-  accessModes:
-  - ReadWriteMany
-  storage: 100Gi
-  source: //SERVER/Downloads
-# Media on a SMB share
-- name: media
-  className: smb
-  accessModes: 
-  - ReadWriteMany
-  storage: 100Gi
-  source: //SERVER/Media
 ```
 
 Finally, install the chart:

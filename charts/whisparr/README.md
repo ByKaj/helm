@@ -7,60 +7,45 @@
 
 **Homepage:** <https://github.com/Whisparr/Whisparr>
 
+## Prerequisites
+This application requires:
+- A volume in Longhorn named `whisparr-config`;
+- A secret with a wildcard certificate in the same namespace named `example-com-tls` (change to your domainname);
+- The SMB credentials stored in the secret `smb-credentials` in the `default` namespace.
+
 ## Usage
-Make a local `values.yaml` file with the following content and change the values to match your environment.
+Make a `values.yaml` file with the following (minimal) content and change the values to match your environment. For all the possible configuration overrides see [values.yaml](https://github.com/ByKaj/helm/blob/main/charts/whisparr/values.yaml).
 ```yaml
 global:
   # Local timezone
   timezone: Europe/Amsterdam
 
-containers:
-  app:
-    # The volume mounts inside the container
-    # The `name` references a volume in `volumes`
-    volumeMounts:
-    - mountPath: /config
-      readOnly: false
-      name: config
-    - mountPath: /downloads
-      readOnly: false
-      name: downloads
-    - mountPath: /data
-      readOnly: false
-      name: media
+  # Storage request for the config folder
+  configStorage: 3Gi
+
+  # Source and target for your downloads folder
+  downloads:
+    # Mount path in the container
+    mountPath: /downloads
+    # Source on the SMB share
+    source: //SERVER/Downloads
+    subPath: ""
+
+  # Source and target for your media folder
+  media:
+    # Mount path in the container
+    mountPath: /data
+    # Source on the SMB share
+    source: //SERVER/Media
+    subPath: ""
 
 ingress:
   # Your domain name(s)
   domains: 
-  - domain.tld
+    - example.com
 
-  # The subdomain of the domain (e.g. `my-app`)
-  # @default -- `<app.fullname>`
+  # The subdomain of the domain (e.g. `my-app`, defaults to `app.fullname`)
   subdomainOverride: ""
-  
-# Add the persistent volumes
-volumes:
-  # Config store on Longhorn
-  - name: config
-    className: longhorn
-    accessModes: 
-    - ReadWriteOnce
-    storage: 3Gi
-    source: ""
-  # Downloads on a SMB share
-  - name: downloads
-    className: smb
-    accessModes: 
-    - ReadWriteMany
-    storage: 100Gi
-    source: //SERVER/Downloads
-  # Media on a SMB share
-  - name: media
-    className: smb
-    accessModes: 
-    - ReadWriteMany
-    storage: 100Gi
-    source: //SERVER/Media
 ```
 
 Finally, install the chart:

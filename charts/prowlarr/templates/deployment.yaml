@@ -96,9 +96,19 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with $containerValues.volumeMounts }}
+          {{- if $containerValues.volumeMounts }}
           volumeMounts:
-            {{- toYaml . | nindent 12 }}
+          {{- range $containerValues.volumeMounts }}
+            - mountPath: {{ tpl .mountPath $ }}
+              name: {{ tpl .name $ }}
+              {{- if .subPath }}
+              {{- $subPath := tpl .subPath $ -}}
+              {{- if eq (substr 0 1 $subPath) "/" }}
+                {{- $subPath = substr 1 -1 $subPath }}
+              {{- end }}
+              subPath: {{ $subPath }}
+              {{- end }}
+          {{- end }}
           {{- end }}
         {{- end }}
         {{- end }}
@@ -154,23 +164,35 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with $containerValues.volumeMounts }}
+          {{- if $containerValues.volumeMounts }}
           volumeMounts:
-            {{- toYaml . | nindent 12 }}
+          {{- range $containerValues.volumeMounts }}
+            - mountPath: {{ tpl .mountPath $ }}
+              name: {{ tpl .name $ }}
+              {{- if .subPath }}
+              {{- $subPath := tpl .subPath $ -}}
+              {{- if $subPath }}
+              {{- if eq (substr 0 1 $subPath) "/" }}
+                {{- $subPath = substr 1 -1 $subPath }}
+              {{- end }}
+              subPath: {{ $subPath }}
+              {{- end }}
+              {{- end }}
+          {{- end }}
           {{- end }}
         {{- end }}
         {{- end }}
       hostname: {{ include "app.fullname" $ }}
       {{- if .Values.volumes }}
       volumes:
-      {{- range .Values.volumes }}
+      {{- range $key, $volume := .Values.volumes }}
       {{- $claimName := "" -}}
-      {{- if eq (toString .className) "longhorn" }}
-        {{- $claimName = ((cat (include "app.fullname" $) "-" .name "-lgn-pvc") | nospace) -}}
-      {{- else if eq (toString .className) "smb" }}
-        {{- $claimName = ((cat (include "app.fullname" $) "-" .name "-smb-pvc") | nospace) -}}
+      {{- if (eq $volume.className "longhorn") }}
+        {{- $claimName = (cat (include "app.fullname" $) "-" $key "-lgn-pvc" | nospace) -}}
+      {{- else if (eq $volume.className "smb") }}
+        {{- $claimName = (cat (include "app.fullname" $) "-" $key "-smb-pvc" | nospace) -}}
       {{- end }}
-        - name: {{ .name }}
+        - name: {{ $key }}
           persistentVolumeClaim:
             claimName: {{ $claimName }}
       {{- end }}
