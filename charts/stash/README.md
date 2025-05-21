@@ -22,25 +22,9 @@ global:
 
   # Storage request for the config folder
   configStorage: 5Gi
-  
-  # Source and target for your config folder
-  config:
-    # Mount paths in the container with the corresponding subpath on the share
-    blobs:
-      mountPath: /blobs
-      subPath: blobs
-    cache:
-      mountPath: /cache
-      subPath: cache
-    config:
-      mountPath: /root/.stash
-      subPath: config
-    generated:
-      mountPath: /generated
-      subPath: generated
-    metadata:
-      mountPath: /metadata
-      subPath: metadata
+
+  # Change to the amount of agent nodes used for storage
+  configReplicas: 3
 
   # Source and target for your media folder
   media:
@@ -66,4 +50,33 @@ helm install stash bykaj/stash -f values.yaml
 To uninstall the chart:
 ```bash
 helm uninstall stash
+```
+
+## Environment and secret variables
+You can add additional (or overwrite existing) environment or secret variables to the contianers in a pod by adding the following lines to `values.yaml`:
+```yaml
+containers:
+  app:                              # Container reference key
+    env:
+      MY_ENV_VAR: "foo"
+    secret:
+      MY_SECRET_VAR: "bar"
+```
+
+## Storage and volume mapping
+You can add additional (or overwrite existing) volume mounts to the containers in a pod by adding the following lines to `values.yaml`:
+```yaml
+containers:
+  app:                              # Container reference key
+    volumeMounts:
+      backups:                      # Volume reference key
+        "apps/my-app": "/backup"    # Format: "[source relative path]": "<container mount path>"
+
+volumes:
+  backups:                          # Volume reference key
+    className: smb
+    accessModes: 
+      - ReadWriteMany
+    storage: 100Gi
+    source: //SERVER/Backups
 ```

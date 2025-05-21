@@ -1,6 +1,6 @@
 apiVersion: v2
 name: jellyseerr
-version: 1.1.0
+version: 1.1.1
 description: Jellyseerr is a content request and management system for Plex, Jellyfin and Emby media servers that allows users to easily request new movies and TV shows. It integrates with Radarr and Sonarr to automatically add approved requests to your download queue, creating a seamless request-to-watch experience for your media server users.
 type: application
 home: https://docs.jellyseerr.dev

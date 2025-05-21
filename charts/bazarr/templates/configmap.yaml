@@ -12,8 +12,8 @@ metadata:
   labels:
     {{- include "app.labels" $ | nindent 4 }}
 data:
-  {{- range $containerValues.env }}
-  {{ .name }}: {{ tpl .value $ | quote }}
+  {{- range $key, $value := $containerValues.env }}
+  {{ $key }}: {{ tpl $value $ | quote }}
   {{- end }}
 {{ end -}}
 {{- end -}}

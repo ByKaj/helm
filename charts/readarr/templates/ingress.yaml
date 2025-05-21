@@ -46,10 +46,10 @@ spec:
     {{- end }}
       services:
         {{- range $containerKey, $containerValues := $containers }}
-        {{- range $containerValues.service }}
-        {{- if .ingress }}
+        {{- range $key, $value := $containerValues.service }}
+        {{- if $value.ingress }}
         - name: {{ include "app.fullname" $ }}-svc
-          port: {{ .port }}
+          port: {{ $value.port }}
         {{- end }}
         {{- end }}
         {{- end }}

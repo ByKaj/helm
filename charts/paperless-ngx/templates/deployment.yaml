@@ -78,10 +78,10 @@ spec:
           {{- end }}
           {{- with $containerValues.service }}
           ports:
-            {{- range . }}
-            - name: {{ .name }}
-              containerPort: {{ .port }}
-              protocol: {{ .protocol }}
+            {{- range $key, $value := . }}
+            - name: {{ $key }}
+              containerPort: {{ $value.port }}
+              protocol: {{ $value.protocol }}
             {{- end }}
           {{- end }}
           {{- with $containerValues.livenessProbe }}
@@ -98,16 +98,18 @@ spec:
           {{- end }}
           {{- if $containerValues.volumeMounts }}
           volumeMounts:
-          {{- range $containerValues.volumeMounts }}
-            - mountPath: {{ tpl .mountPath $ }}
-              name: {{ tpl .name $ }}
-              {{- if .subPath }}
-              {{- $subPath := tpl .subPath $ -}}
+          {{- range $key, $volume := $containerValues.volumeMounts }}
+          {{- range $subPath, $mountPath := $volume }}
+            - name: {{ $key }}
+              mountPath: {{ tpl $mountPath $ }}
+              {{- $subPath := tpl $subPath $ -}}
+              {{- if $subPath }}
               {{- if eq (substr 0 1 $subPath) "/" }}
                 {{- $subPath = substr 1 -1 $subPath }}
               {{- end }}
               subPath: {{ $subPath }}
               {{- end }}
+          {{- end }}
           {{- end }}
           {{- end }}
         {{- end }}
@@ -146,10 +148,10 @@ spec:
           {{- end }}
           {{- with $containerValues.service }}
           ports:
-            {{- range . }}
-            - name: {{ .name }}
-              containerPort: {{ .port }}
-              protocol: {{ .protocol }}
+            {{- range $key, $value := . }}
+            - name: {{ $key }}
+              containerPort: {{ $value.port }}
+              protocol: {{ $value.protocol }}
             {{- end }}
           {{- end }}
           {{- with $containerValues.livenessProbe }}
@@ -166,18 +168,18 @@ spec:
           {{- end }}
           {{- if $containerValues.volumeMounts }}
           volumeMounts:
-          {{- range $containerValues.volumeMounts }}
-            - mountPath: {{ tpl .mountPath $ }}
-              name: {{ tpl .name $ }}
-              {{- if .subPath }}
-              {{- $subPath := tpl .subPath $ -}}
+          {{- range $key, $volume := $containerValues.volumeMounts }}
+          {{- range $subPath, $mountPath := $volume }}
+            - name: {{ $key }}
+              mountPath: {{ tpl $mountPath $ }}
+              {{- $subPath := tpl $subPath $ -}}
               {{- if $subPath }}
               {{- if eq (substr 0 1 $subPath) "/" }}
                 {{- $subPath = substr 1 -1 $subPath }}
               {{- end }}
               subPath: {{ $subPath }}
               {{- end }}
-              {{- end }}
+          {{- end }}
           {{- end }}
           {{- end }}
         {{- end }}

@@ -23,6 +23,9 @@ global:
   # Storage request for the config folder
   configStorage: 1Gi
 
+  # Change to the amount of agent nodes used for storage
+  configReplicas: 3
+
   # Source and target for your downloads folder
   downloads:
     # Mount path in the container
@@ -47,4 +50,33 @@ helm install sabnzbd bykaj/sabnzbd -f values.yaml
 To uninstall the chart:
 ```bash
 helm uninstall sabnzbd
+```
+
+## Environment and secret variables
+You can add additional (or overwrite existing) environment or secret variables to the contianers in a pod by adding the following lines to `values.yaml`:
+```yaml
+containers:
+  app:                              # Container reference key
+    env:
+      MY_ENV_VAR: "foo"
+    secret:
+      MY_SECRET_VAR: "bar"
+```
+
+## Storage and volume mapping
+You can add additional (or overwrite existing) volume mounts to the containers in a pod by adding the following lines to `values.yaml`:
+```yaml
+containers:
+  app:                              # Container reference key
+    volumeMounts:
+      backups:                      # Volume reference key
+        "apps/my-app": "/backup"    # Format: "[source relative path]": "<container mount path>"
+
+volumes:
+  backups:                          # Volume reference key
+    className: smb
+    accessModes: 
+      - ReadWriteMany
+    storage: 100Gi
+    source: //SERVER/Backups
 ```

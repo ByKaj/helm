@@ -58,10 +58,8 @@ containers:
     # Environment variables to pass to the deployed container. A specific ConfigMap is created.
     # @default -- `[]` (See [values.yaml])
     env:
-      - name: PANGOLIN_ENDPOINT
-        value: "{{ .Values.global.pangolinEndpoint }}"
-      - name: NEWT_ID
-        value: "{{ .Values.global.newtId }}"
+      PANGOLIN_ENDPOINT: "{{ .Values.global.pangolinEndpoint }}"
+      NEWT_ID: "{{ .Values.global.newtId }}"
     
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
@@ -70,15 +68,14 @@ containers:
     # Secret variables to pass to the deployed container. A specific Secret is created.
     # @default -- `[]` (See [values.yaml])
     secret:
-      - name: NEWT_SECRET
-        value: "{{ .Values.global.newtSecret }}"
+      NEWT_SECRET: "{{ .Values.global.newtSecret }}"
 
     # Use ConfigMap from another container (key). Overrides `secret`.
     # @default -- `""` (See [values.yaml])
     secretUse: ""
 
     # Additional volumeMounts on the output Deployment definition.
-    volumeMounts: []
+    volumeMounts: {}
 
     resources: {}
 
@@ -135,7 +132,7 @@ ingress:
 
   # Kind of ingress route (IngressRoute or IngressRouteTCP).
   # @default -- 'IngressRoute' (See [values.yaml])
-  kind: IngressRoute
+  kind: ""
 
   # Domainnames (format: - <domain>.<tld>).
   domains: []

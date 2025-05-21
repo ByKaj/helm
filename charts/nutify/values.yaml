@@ -13,6 +13,9 @@ global:
   # Storage request for the config folder
   configStorage: 3Gi
 
+  # Change to the amount of agent nodes used for storage
+  configReplicas: 3
+
   # Secret key used for encryption
   # @default -- "SecretKeyOf32+Char"
   secretKey: SecretKeyOf32+Char
@@ -46,7 +49,7 @@ containers:
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
       # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-      - name: http
+      http:
         enabled: true
         port: 5050
         protocol: TCP
@@ -73,8 +76,7 @@ containers:
     # Environment variables to pass to the deployed container. A specific ConfigMap is created.
     # @default -- `[]` (See [values.yaml])
     env:
-      - name: TZ
-        value: "{{ .Values.global.timezone }}"
+      TZ: "{{ .Values.global.timezone }}"
     
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
@@ -83,8 +85,7 @@ containers:
     # Secret variables to pass to the deployed container. A specific Secret is created.
     # @default -- `[]` (See [values.yaml])
     secret:
-      - name: SECRET_KEY
-        value: "{{ .Values.global.secretKey }}"
+      SECRET_KEY: "{{ .Values.global.secretKey }}"
 
     # Use ConfigMap from another container (key). Overrides `secret`.
     # @default -- `""` (See [values.yaml])
@@ -92,22 +93,11 @@ containers:
 
     # Additional volumeMounts on the output Deployment definition.
     volumeMounts:
-      - mountPath: /app/nutify/logs
-        subPath: logs
-        readOnly: false
-        name: config
-      - mountPath: /app/nutify/instance
-        subPath: instance
-        readOnly: false
-        name: config
-      - mountPath: /app/ssl
-        subPath: ssl
-        readOnly: false
-        name: config
-      - mountPath: /etc/nut
-        subPath: etc/nut
-        readOnly: false
-        name: config
+      config:
+        "logs": "/app/nutify/logs"
+        "instance": "/app/nutify/instance"
+        "ssl": "/app/ssl"
+        "etc/nut": "/etc/nut"
 
     resources: {}
 
@@ -206,7 +196,7 @@ volumes:
     accessModes: 
       - ReadWriteOnce
     storage: "{{ .Values.global.configStorage }}"
-    source: ""
+    numberOfReplicas: "{{ .Values.global.configReplicas }}"
 
 # -----------------------------------------------------------------------------
 # -- Scheduling, Preemption and Eviction

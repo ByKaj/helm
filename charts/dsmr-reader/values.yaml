@@ -13,6 +13,9 @@ global:
   # Storage request for the config folder
   configStorage: 3Gi
 
+  # Change to the amount of agent nodes used for storage
+  configReplicas: 3
+
   # Database name
   # @default -- "dsmrreader"
   databaseName: dsmrreader
@@ -63,7 +66,7 @@ containers:
     # This is for setting up a service
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
-      - name: psql
+      psql:
         enabled: false
         port: 5432
         protocol: TCP
@@ -80,10 +83,8 @@ containers:
     # Environment variables to pass to the deployed container. A specific ConfigMap is created.
     # @default -- `[]` (See [values.yaml])
     env:
-      - name: PG_TZ
-        value: "{{ .Values.global.timezone }}"
-      - name: POSTGRES_DB
-        value: "{{ .Values.global.databaseName }}"
+      PG_TZ: "{{ .Values.global.timezone }}"
+      POSTGRES_DB: "{{ .Values.global.databaseName }}"
     
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
@@ -92,10 +93,8 @@ containers:
     # Secret variables to pass to the deployed container. A specific Secret is created.
     # @default -- `[]` (See [values.yaml])
     secret:
-      - name: POSTGRES_USER
-        value: "{{ .Values.global.databaseUsername }}"
-      - name: POSTGRES_PASSWORD
-        value: "{{ .Values.global.databasePassword }}"
+      POSTGRES_USER: "{{ .Values.global.databaseUsername }}"
+      POSTGRES_PASSWORD: "{{ .Values.global.databasePassword }}"
 
     # Use ConfigMap from another container (key). Overrides `secret`.
     # @default -- `""` (See [values.yaml])
@@ -103,10 +102,8 @@ containers:
 
     # Additional volumeMounts on the output Deployment definition.
     volumeMounts:
-      - mountPath: /var/lib/postgresql/data
-        readOnly: false
-        name: config
-        subPath: postgresql
+      config:
+        "postgresql": "/var/lib/postgresql/data"
 
     resources: {}
 
@@ -133,7 +130,7 @@ containers:
     # This is for setting up a service
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
-      - name: http
+      http:
         enabled: true
         port: 80
         protocol: TCP
@@ -160,22 +157,14 @@ containers:
     # Environment variables to pass to the deployed container. A specific ConfigMap is created.
     # @default -- `[]` (See [values.yaml])
     env:
-      - name: DUID
-        value: "0"
-      - name: DGID
-        value: "0"
-      - name: DJANGO_TIME_ZONE
-        value: "{{ .Values.global.timezone }}"
-      - name: DSMRREADER_OPERATION_MODE
-        value: "{{ .Values.global.operationMode }}"
-      - name: DJANGO_DATABASE_ENGINE
-        value: "django.db.backends.postgresql"
-      - name: DJANGO_DATABASE_NAME
-        value: "{{ .Values.global.databaseName }}"
-      - name: DJANGO_DATABASE_HOST
-        value: "localhost"
-      - name: DJANGO_DATABASE_PORT
-        value: "5432"
+      DUID: "0"
+      DGID: "0"
+      DJANGO_TIME_ZONE: "{{ .Values.global.timezone }}"
+      DSMRREADER_OPERATION_MODE: "{{ .Values.global.operationMode }}"
+      DJANGO_DATABASE_ENGINE: "django.db.backends.postgresql"
+      DJANGO_DATABASE_NAME: "{{ .Values.global.databaseName }}"
+      DJANGO_DATABASE_HOST: "localhost"
+      DJANGO_DATABASE_PORT: "5432"
 
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
@@ -184,21 +173,17 @@ containers:
     # Secret variables to pass to the deployed container. A specific Secret is created.
     # @default -- `[]` (See [values.yaml])
     secret:
-      - name: DSMRREADER_ADMIN_USER
-        value: "{{ .Values.global.adminUsername }}"
-      - name: DSMRREADER_ADMIN_PASSWORD
-        value: "{{ .Values.global.adminPassword }}"
-      - name: DJANGO_DATABASE_USER
-        value: "{{ .Values.global.databaseUsername }}"
-      - name: DJANGO_DATABASE_PASSWORD
-        value: "{{ .Values.global.databasePassword }}"
+      DSMRREADER_ADMIN_USER: "{{ .Values.global.adminUsername }}"
+      DSMRREADER_ADMIN_PASSWORD: "{{ .Values.global.adminPassword }}"
+      DJANGO_DATABASE_USER: "{{ .Values.global.databaseUsername }}"
+      DJANGO_DATABASE_PASSWORD: "{{ .Values.global.databasePassword }}"
 
     # Use ConfigMap from another container (key). Overrides `secret`.
     # @default -- `""` (See [values.yaml])
     secretUse: ""
 
     # Additional volumeMounts on the output Deployment definition.
-    volumeMounts: []
+    volumeMounts: {}
 
     resources: {}
 
@@ -302,7 +287,7 @@ volumes:
     accessModes: 
       - ReadWriteOnce
     storage: "{{ .Values.global.configStorage }}"
-    source: ""
+    numberOfReplicas: "{{ .Values.global.configReplicas }}"
 
 # -----------------------------------------------------------------------------
 # -- Scheduling, Preemption and Eviction

@@ -13,6 +13,9 @@ global:
   # Storage request for the config folder
   configStorage: 3Gi
 
+  # Change to the amount of agent nodes used for storage
+  configReplicas: 3
+
   # Source and target for your downloads folder
   downloads:
     # Mount path in the container
@@ -57,7 +60,7 @@ containers:
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
       # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-      - name: http
+      http:
         enabled: true
         port: 8989
         protocol: TCP
@@ -84,12 +87,9 @@ containers:
     # Environment variables to pass to the deployed container. A specific ConfigMap is created.
     # @default -- `[]` (See [values.yaml])
     env:
-      - name: TZ
-        value: "{{ .Values.global.timezone }}"
-      - name: PUID
-        value: "0"
-      - name: PGID
-        value: "0"
+      TZ: "{{ .Values.global.timezone }}"
+      PUID: "0"
+      PGID: "0"
     
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
@@ -105,14 +105,12 @@ containers:
 
     # Additional volumeMounts on the output Deployment definition.
     volumeMounts:
-      - name: config
-        mountPath: /config
-      - name: downloads
-        mountPath: "{{ .Values.global.downloads.mountPath }}"
-        subPath: "{{ .Values.global.downloads.subPath }}"
-      - name: series
-        mountPath: "{{ .Values.global.series.mountPath }}"
-        subPath: "{{ .Values.global.series.subPath }}"
+      config:
+        "": "/config"
+      downloads:
+        "{{ .Values.global.downloads.subPath }}": "{{ .Values.global.downloads.mountPath }}"
+      series:
+        "{{ .Values.global.series.subPath }}": "{{ .Values.global.series.mountPath }}"
 
     resources: {}
 
@@ -215,7 +213,7 @@ volumes:
     accessModes: 
       - ReadWriteOnce
     storage: "{{ .Values.global.configStorage }}"
-    source: ""
+    numberOfReplicas: "{{ .Values.global.configReplicas }}"
   downloads:
     className: smb
     accessModes: 

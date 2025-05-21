@@ -12,25 +12,9 @@ global:
 
   # Storage request for the config folder
   configStorage: 5Gi
-  
-  # Source and target for your config folder
-  config:
-    # Mount paths in the container with the corresponding subpath on the share
-    blobs:
-      mountPath: /blobs
-      subPath: blobs
-    cache:
-      mountPath: /cache
-      subPath: cache
-    config:
-      mountPath: /root/.stash
-      subPath: config
-    generated:
-      mountPath: /generated
-      subPath: generated
-    metadata:
-      mountPath: /metadata
-      subPath: metadata
+
+  # Change to the amount of agent nodes used for storage
+  configReplicas: 3
 
   # Source and target for your media folder
   media:
@@ -67,7 +51,7 @@ containers:
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
       # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-      - name: http
+      http:
         enabled: true
         port: 9999
         protocol: TCP
@@ -94,20 +78,13 @@ containers:
     # Environment variables to pass to the deployed container. A specific ConfigMap is created.
     # @default -- `[]` (See [values.yaml])
     env:
-      - name: TZ
-        value: "{{ .Values.global.timezone }}"
-      - name: PUID
-        value: "0"
-      - name: PGID
-        value: "0"
-      - name: STASH_STASH
-        value: "{{ .Values.global.media.mountPath }}"
-      - name: STASH_GENERATED
-        value: "{{ .Values.global.config.generated.mountPath }}"
-      - name: STASH_METADATA
-        value: "{{ .Values.global.config.metadata.mountPath }}"
-      - name: STASH_CACHE
-        value: "{{ .Values.global.config.cache.mountPath }}"
+      TZ: "{{ .Values.global.timezone }}"
+      PUID: "0"
+      PGID: "0"
+      STASH_STASH: "{{ .Values.global.media.mountPath }}"
+      STASH_GENERATED: "/generated"
+      STASH_METADATA: "/metadata"
+      STASH_CACHE: "/cache"
     
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
@@ -115,7 +92,7 @@ containers:
 
     # Secret variables to pass to the deployed container. A specific Secret is created.
     # @default -- `[]` (See [values.yaml])
-    secret: []
+    secret: {}
 
     # Use ConfigMap from another container (key). Overrides `secret`.
     # @default -- `""` (See [values.yaml])
@@ -123,24 +100,15 @@ containers:
 
     # Additional volumeMounts on the output Deployment definition.
     volumeMounts:
-      - name: config
-        mountPath: "{{ .Values.global.config.config.mountPath }}"
-        subPath: "{{ .Values.global.config.config.subPath }}"
-      - name: config
-        mountPath: "{{ .Values.global.config.blobs.mountPath }}"
-        subPath: "{{ .Values.global.config.blobs.subPath }}"
-      - name: config
-        mountPath: "{{ .Values.global.config.cache.mountPath }}"
-        subPath: "{{ .Values.global.config.cache.subPath }}"
-      - name: config
-        mountPath: "{{ .Values.global.config.generated.mountPath }}"
-        subPath: "{{ .Values.global.config.generated.subPath }}"
-      - name: config
-        mountPath: "{{ .Values.global.config.metadata.mountPath }}"
-        subPath: "{{ .Values.global.config.metadata.subPath }}"
-      - name: media
-        mountPath: "{{ .Values.global.media.mountPath }}"
-        subPath: "{{ .Values.global.media.subPath }}"
+      config:
+        "blobs": "/blobs"
+        "cache": "/cache"
+        "config": "/root/.stash"
+        "generated": "/generated"
+        "metadata": "/metadata"
+      media:
+        "{{ .Values.global.media.subPath }}": "{{ .Values.global.media.mountPath }}"
+
 
     resources: {}
 
@@ -243,7 +211,7 @@ volumes:
     accessModes: 
       - ReadWriteOnce
     storage: "{{ .Values.global.configStorage }}"
-    source: ""
+    numberOfReplicas: "{{ .Values.global.configReplicas }}"
   media:
     className: smb
     accessModes: 
@@ -270,7 +238,7 @@ affinity: {}
 # Ref: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1
 
-# This section is for setting up autoscaling. 
+# This section is for setting up autoscaling.
 # Ref: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:
   enabled: false

@@ -35,8 +35,8 @@ spec:
     readOnly: false
     fsType: ext4
     volumeAttributes:
-      numberOfReplicas: '3'
-      staleReplicaTimeout: '2880'
+      numberOfReplicas: {{ tpl $volume.numberOfReplicas $ | quote }}
+      staleReplicaTimeout: "2880"
   {{- else if (eq $volume.className "smb") }}
   csi:
     driver: smb.csi.k8s.io
@@ -47,6 +47,6 @@ spec:
       name: {{ required ".credentials.smb.secret not found: SMB credentials secret not defined" $.Values.credentials.smb.secret }}
       namespace: {{ required ".credentials.smb.namespace not found: SMB credentials namespace not defined" $.Values.credentials.smb.namespace }}
   {{- end }}
-    volumeHandle: {{ include "app.name" $ }}-{{ .name }}
+    volumeHandle: {{ include "app.name" $ }}-{{ $key }}
 {{ end -}}
 {{- end -}}

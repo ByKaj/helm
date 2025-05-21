@@ -13,12 +13,12 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     {{- range $containerKey, $containerValues := .Values.containers }}
-    {{- range $containerValues.service }}
-    {{- if .enabled }}
-    - name: {{ .name }}
-      port: {{ .port }}
-      targetPort: {{ .port }}
-      protocol: {{ .protocol }}
+    {{- range $key, $value := $containerValues.service }}
+    {{- if $value.enabled }}
+    - name: {{ $key }}
+      port: {{ $value.port }}
+      targetPort: {{ $value.port }}
+      protocol: {{ $value.protocol }}
     {{- end }}
     {{- end }}
     {{- end }}

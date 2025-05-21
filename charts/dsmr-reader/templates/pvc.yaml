@@ -27,7 +27,7 @@ spec:
   storageClassName: {{ $volume.className }}
   resources:
     requests:
-      storage: {{ tpl $volume.storage $ }}
+      storage: {{ tpl $volume.storage $  }}
   volumeName: {{ $name }}-pv
 {{ end -}}
 {{- end -}}

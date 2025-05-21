@@ -13,20 +13,11 @@ global:
   # Storage request for the config folder
   configStorage: 3Gi
 
-  # Source and target for your movies folder
-  archive:
-    # Source on the SMB share
-    source: //SERVER/Archive
-    # Mount paths in the container with the corresponding subpath on the share
-    media:
-      mountPath: /usr/src/paperless/media
-      subPath: media
-    consume:
-      mountPath: /usr/src/paperless/consume
-      subPath: consume
-    export:
-      mountPath: /usr/src/paperless/export
-      subPath: export
+  # Change to the amount of agent nodes used for storage
+  configReplicas: 3
+
+  # Source for your documents folder
+  source: //SERVER/Archive
 
   # Database name
   # @default -- "paperless"
@@ -113,7 +104,7 @@ containers:
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
       # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-      - name: psql
+      psql:
         enabled: false
         port: 5432
         protocol: TCP
@@ -130,10 +121,8 @@ containers:
     # Environment variables to pass to the deployed container. A specific ConfigMap is created.
     # @default -- `[]` (See [values.yaml])
     env:
-      - name: PG_TZ
-        value: "{{ .Values.global.timezone }}"
-      - name: POSTGRES_DB
-        value: "{{ .Values.global.databaseName }}"
+      PG_TZ: "{{ .Values.global.timezone }}"
+      POSTGRES_DB: "{{ .Values.global.databaseName }}"
     
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
@@ -142,10 +131,8 @@ containers:
     # Secret variables to pass to the deployed container. A specific Secret is created.
     # @default -- `[]` (See [values.yaml])
     secret:
-      - name: POSTGRES_USER
-        value: "{{ .Values.global.databaseUsername }}"
-      - name: POSTGRES_PASSWORD
-        value: "{{ .Values.global.databasePassword }}"
+      POSTGRES_USER: "{{ .Values.global.databaseUsername }}"
+      POSTGRES_PASSWORD: "{{ .Values.global.databasePassword }}"
 
     # Use ConfigMap from another container (key). Overrides `secret`.
     # @default -- `""` (See [values.yaml])
@@ -153,10 +140,8 @@ containers:
 
     # Additional volumeMounts on the output Deployment definition.
     volumeMounts:
-      - mountPath: /var/lib/postgresql/data
-        readOnly: false
-        name: config
-        subPath: postgresql
+      config:
+        "postgresql": "/var/lib/postgresql/data"
 
     resources: {}
 
@@ -181,7 +166,7 @@ containers:
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
       # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-      - name: redis
+      redis:
         enabled: false
         port: 6379
         protocol: TCP
@@ -198,7 +183,7 @@ containers:
 
     # Environment variables to pass to the deployed container. A specific ConfigMap is created.
     # @default -- `[]` (See [values.yaml])
-    env: []
+    env: {}
     
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
@@ -206,7 +191,7 @@ containers:
 
     # Secret variables to pass to the deployed container. A specific Secret is created.
     # @default -- `[]` (See [values.yaml])
-    secret: []
+    secret: {}
 
     # Use ConfigMap from another container (key). Overrides `secret`.
     # @default -- `""` (See [values.yaml])
@@ -214,10 +199,8 @@ containers:
 
     # Additional volumeMounts on the output Deployment definition.
     volumeMounts:
-      - mountPath: /data
-        readOnly: false
-        name: config
-        subPath: redis
+      config:
+        "redis": "data"
 
     resources: {}
 
@@ -242,7 +225,7 @@ containers:
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
       # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-      - name: http
+      http:
         enabled: true
         port: 8000
         protocol: TCP
@@ -270,38 +253,22 @@ containers:
     # @default -- `[]` (See [values.yaml])
     # Ref: https://docs.paperless-ngx.com/configuration/
     env:
-      - name: USERMAP_UID
-        value: "0"
-      - name: USERMAP_GID
-        value: "0"
-      - name: PAPERLESS_DBNAME
-        value: "{{ .Values.global.databaseName }}"
-      - name: PAPERLESS_REDIS
-        value: redis://localhost:6379
-      - name: PAPERLESS_DBHOST
-        value: localhost
-      - name: PAPERLESS_URL
-        value: "{{ .Values.global.paperlessUrl }}"
-      - name: PAPERLESS_TIME_ZONE
-        value: "{{ .Values.global.timezone }}"
-      - name: PAPERLESS_OCR_LANGUAGE
-        value: "{{ .Values.global.paperlessOcrLanguage }}"
-      - name: PAPERLESS_OCR_LANGUAGES
-        value: "{{ .Values.global.paperlessOcrLanguages }}"
-      - name: PAPERLESS_FILENAME_FORMAT
-        value: "{{ .Values.global.paperlessFilenameFormat }}"
-      - name: PAPERLESS_CONSUMER_POLLING
-        value: "{{ .Values.global.paperlessConsumerPolling }}"
-      - name: PAPERLESS_APPS
-        value: "{{ .Values.global.paperlessApps }}"
-      - name: PAPERLESS_SOCIALACCOUNT_PROVIDERS
-        value: "{{ .Values.global.paperlessSocialAccountProviders }}"
-      - name: PAPERLESS_DISABLE_REGULAR_LOGIN
-        value: "{{ .Values.global.paperlessDisableRegularLogin }}"
-      - name: PAPERLESS_REDIRECT_LOGIN_TO_SSO
-        value: "{{ .Values.global.paperlessRedirectLoginToSso }}"
-      - name: PAPERLESS_LOGOUT_REDIRECT_URL
-        value: "{{ .Values.global.paperlessLogoutRedirectUrl }}"
+      USERMAP_UID: "0"
+      USERMAP_GID: "0"
+      PAPERLESS_DBNAME: "{{ .Values.global.databaseName }}"
+      PAPERLESS_REDIS: redis://localhost:6379
+      PAPERLESS_DBHOST: localhost
+      PAPERLESS_URL: "{{ .Values.global.paperlessUrl }}"
+      PAPERLESS_TIME_ZONE: "{{ .Values.global.timezone }}"
+      PAPERLESS_OCR_LANGUAGE: "{{ .Values.global.paperlessOcrLanguage }}"
+      PAPERLESS_OCR_LANGUAGES: "{{ .Values.global.paperlessOcrLanguages }}"
+      PAPERLESS_FILENAME_FORMAT: "{{ .Values.global.paperlessFilenameFormat }}"
+      PAPERLESS_CONSUMER_POLLING: "{{ .Values.global.paperlessConsumerPolling }}"
+      PAPERLESS_APPS: "{{ .Values.global.paperlessApps }}"
+      PAPERLESS_SOCIALACCOUNT_PROVIDERS: "{{ .Values.global.paperlessSocialAccountProviders }}"
+      PAPERLESS_DISABLE_REGULAR_LOGIN: "{{ .Values.global.paperlessDisableRegularLogin }}"
+      PAPERLESS_REDIRECT_LOGIN_TO_SSO: "{{ .Values.global.paperlessRedirectLoginToSso }}"
+      PAPERLESS_LOGOUT_REDIRECT_URL: "{{ .Values.global.paperlessLogoutRedirectUrl }}"
 
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
@@ -311,18 +278,12 @@ containers:
     # @default -- `[]` (See [values.yaml])
     # Ref: https://docs.paperless-ngx.com/configuration/
     secret:
-      - name: PAPERLESS_ADMIN_USER
-        value: "{{ .Values.global.paperlessAdminUsername }}"
-      - name: PAPERLESS_ADMIN_PASSWORD
-        value: "{{ .Values.global.paperlessAdminPassword }}"
-      - name: PAPERLESS_DBUSER
-        value: "{{ .Values.global.databaseUsername }}"
-      - name: PAPERLESS_DBPASS
-        value: "{{ .Values.global.databasePassword }}"
-      - name: PAPERLESS_SECRET_KEY
-        value: "{{ .Values.global.paperlessSecretKey }}"
-      - name: PAPERLESS_API_KEY
-        value: "{{ .Values.global.paperlessApiKey }}"
+      PAPERLESS_ADMIN_USER: "{{ .Values.global.paperlessAdminUsername }}"
+      PAPERLESS_ADMIN_PASSWORD: "{{ .Values.global.paperlessAdminPassword }}"
+      PAPERLESS_DBUSER: "{{ .Values.global.databaseUsername }}"
+      PAPERLESS_DBPASS: "{{ .Values.global.databasePassword }}"
+      PAPERLESS_SECRET_KEY: "{{ .Values.global.paperlessSecretKey }}"
+      PAPERLESS_API_KEY: "{{ .Values.global.paperlessApiKey }}"
 
     # Use ConfigMap from another container (key). Overrides `secret`.
     # @default -- `""` (See [values.yaml])
@@ -330,18 +291,12 @@ containers:
 
     # Additional volumeMounts on the output Deployment definition.
     volumeMounts:
-      - mountPath: /usr/src/paperless/data
-        name: config
-        subPath: paperless
-      - name: archive
-        mountPath: "{{ .Values.global.archive.media.mountPath }}"
-        subPath: "{{ .Values.global.archive.media.subPath }}"
-      - name: archive
-        mountPath: "{{ .Values.global.archive.consume.mountPath }}"
-        subPath: "{{ .Values.global.archive.consume.subPath }}"
-      - name: archive
-        mountPath: "{{ .Values.global.archive.export.mountPath }}"
-        subPath: "{{ .Values.global.archive.export.subPath }}"
+      config:
+        "paperless": "/usr/src/paperless/data"
+      archive:
+        "media": "/usr/src/paperless/media"
+        "consume": "/usr/src/paperless/consume"
+        "export": "/usr/src/paperless/export"
 
     resources: {}
 
@@ -444,13 +399,13 @@ volumes:
     accessModes: 
       - ReadWriteOnce
     storage: "{{ .Values.global.configStorage }}"
-    source: ""
+    numberOfReplicas: "{{ .Values.global.configReplicas }}"
   archive:
     className: smb
     accessModes: 
       - ReadWriteMany
     storage: 100Gi
-    source: "{{ .Values.global.archive.source }}"
+    source: "{{ .Values.global.source }}"
 
 # -----------------------------------------------------------------------------
 # -- Scheduling, Preemption and Eviction

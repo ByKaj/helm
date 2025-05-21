@@ -8,7 +8,10 @@ fullnameOverride: ""    # Defaults to <.Release.Name>-<.Chart.Name>
 global:
   # Storage request for the config folder
   configStorage: 1Gi
-  
+
+  # Change to the amount of agent nodes used for storage
+  configReplicas: 3
+
 # -----------------------------------------------------------------------------
 # -- Configure Pods and Containers
 # -----------------------------------------------------------------------------
@@ -34,13 +37,13 @@ containers:
     # This is for setting up a service
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
-    # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-      - name: mqtt
+      # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
+      mqtt:
         enabled: true
         port: 1883
         protocol: TCP
         ingress: true
-      - name: ws
+      ws:
         enabled: true
         port: 9001
         protocol: TCP
@@ -56,7 +59,7 @@ containers:
 
     # Environment variables to pass to the deployed container. A specific ConfigMap is created.
     # @default -- `[]` (See [values.yaml])
-    env: []
+    env: {}
     
     # Use ConfigMap from another container (key). Overrides `env`.
     # @default -- `""` (See [values.yaml])
@@ -64,7 +67,7 @@ containers:
 
     # Secret variables to pass to the deployed container. A specific Secret is created.
     # @default -- `[]` (See [values.yaml])
-    secret: []
+    secret: {}
 
     # Use ConfigMap from another container (key). Overrides `secret`.
     # @default -- `""` (See [values.yaml])
@@ -72,15 +75,10 @@ containers:
 
     # Additional volumeMounts on the output Deployment definition.
     volumeMounts:
-      - mountPath: /mosquitto/config/
-        name: config
-        subPath: config
-      - mountPath: /mosquitto/data
-        name: config
-        subPath: data
-      - mountPath: /mosquitto/log
-        name: config
-        subPath: log
+      config:
+        "config": "/mosquitto/config"
+        "data": "/mosquitto/data"
+        "log": "/mosquitto/log"
 
     resources: {}
 
@@ -182,7 +180,7 @@ volumes:
     accessModes: 
       - ReadWriteOnce
     storage: "{{ .Values.global.configStorage }}"
-    source: ""
+    numberOfReplicas: "{{ .Values.global.configReplicas }}"
 
 # -----------------------------------------------------------------------------
 # -- Scheduling, Preemption and Eviction
