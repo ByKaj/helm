@@ -1238,6 +1238,25 @@ entries:
   uptime-kuma:
   - apiVersion: v2
     appVersion: latest
+    created: "2025-05-21T18:46:31.203250602Z"
+    description: Uptime Kuma is a self-hosted monitoring tool that tracks the availability
+      and response time of websites, APIs, and other network services in real-time.
+      It features a modern dashboard with status pages, flexible notification options,
+      and detailed uptime reports to help you quickly identify and respond to service
+      outages.
+    digest: 181aebb04eaa9bbcbe4558c12a4a611afd6379ffce904958b1d0163e09d8ff70
+    home: https://uptimekuma.org
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/uptime-kuma.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: uptime-kuma
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/uptime-kuma-1.1.1/uptime-kuma-1.1.1.tgz
+    version: 1.1.1
+  - apiVersion: v2
+    appVersion: latest
     created: "2025-05-21T18:45:00.599679133Z"
     description: Uptime Kuma is a self-hosted monitoring tool that tracks the availability
       and response time of websites, APIs, and other network services in real-time.
@@ -1332,4 +1351,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/whisparr-1.0.0/whisparr-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-21T18:45:00.599811198Z"
+generated: "2025-05-21T18:46:31.20337802Z"
