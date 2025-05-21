@@ -2,7 +2,7 @@
     <img src="https://cdn.jsdelivr.net/gh/selfhst/icons/svg/uptime-kuma.svg" height="120" alt="Uptime Kuma logo">
 </p>
 
-# uptime-kuma
+# Uptime Kuma
 *Uptime Kuma is a self-hosted monitoring tool that tracks the availability and response time of websites, APIs, and other network services in real-time. It features a modern dashboard with status pages, flexible notification options, and detailed uptime reports to help you quickly identify and respond to service outages.*
 
 **Homepage:** <https://uptimekuma.org>
