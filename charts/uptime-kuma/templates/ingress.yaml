@@ -1,0 +1,71 @@
+{{- if .Values.ingress.enabled -}}
+{{- $appFullname := (include "app.fullname" .) -}}
+{{- $kind := .Values.ingress.kind -}}
+{{- $subdomainOverride := .Values.ingress.subdomainOverride -}}
+{{- $middlewares := .Values.ingress.middlewares -}}
+{{- $containers := .Values.containers -}}
+{{- $totalDomains := len .Values.ingress.domains -}}
+{{- $pos := 0 -}}
+{{- $ingressName := "" -}}
+{{- range $index, $domain := .Values.ingress.domains }}
+{{- $pos = (add 1 $index) -}}
+{{- if (eq $totalDomains 1) -}}
+  {{- $ingressName = (cat $appFullname "-rtr" | nospace) -}}
+{{- else -}}
+  {{- $ingressName = (cat $appFullname "-rtr-" $pos | nospace) -}}
+{{- end -}}
+---
+# ------------------------------
+# -- {{ include "app.name" $ | title }} {{ $kind }}
+# -- Name: {{ $ingressName }}
+# ------------------------------
+apiVersion: traefik.io/v1alpha1
+kind: {{ $kind }}
+metadata:
+  name: {{ $ingressName }}
+  labels:
+    {{- include "app.labels" $ | nindent 4 }}
+  annotations:
+    kubernetes.io/ingress.class: traefik-external
+    {{- with $.Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  {{- with $.Values.ingress.entryPoints }}
+  entryPoints:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  routes:
+    {{- with $.Values.ingress }}
+    {{- $hostname := (cat (coalesce $subdomainOverride $appFullname) "." $domain | nospace) -}}
+    {{- if (eq $kind "IngressRouteTCP") }}
+    - match: HostSNI(`{{ $hostname }}`)
+    {{- else }}
+    - match: Host(`{{ $hostname }}`)
+      kind: Rule
+    {{- end }}
+      services:
+        {{- range $containerKey, $containerValues := $containers }}
+        {{- range $key, $value := $containerValues.service }}
+        {{- if $value.ingress }}
+        - name: {{ include "app.fullname" $ }}-svc
+          port: {{ $value.port }}
+        {{- end }}
+        {{- end }}
+        {{- end }}
+      {{- with $middlewares }}
+      middlewares:
+        {{- range . }}
+        - name: {{ . }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- if $.Values.ingress.tlsSecret }}
+  tls:
+    secretName: {{ $.Values.ingress.tlsSecret }}
+  {{- else }}
+  tls:
+    secretName: {{ $domain | replace "." "-" }}-tls
+  {{- end }}
+{{- end }}
+{{- end -}}
