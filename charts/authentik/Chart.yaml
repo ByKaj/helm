@@ -1,0 +1,11 @@
+apiVersion: v2
+name: authentik
+version: 1.1.0
+description: Authentik is an open-source Identity Provider (IdP) and Single Sign-On (SSO) solution built with security at its core, allowing organizations to manage authentication and authorization across applications without relying on third-party services.
+type: application
+home: https://goauthentik.io
+maintainers:
+  - name: ByKaj
+    url: https://github.com/ByKaj
+icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/authentik.svg
+appVersion: "2025.4.1"

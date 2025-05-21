@@ -1,0 +1,27 @@
+{{- if .Values.service -}}
+# ------------------------------
+# -- {{ include "app.name" $ | title }} Service
+# -- Name: {{ include "app.fullname" . }}-svc
+# ------------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "app.fullname" . }}-svc
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    {{- range $containerKey, $containerValues := .Values.containers }}
+    {{- range $key, $value := $containerValues.service }}
+    {{- if $value.enabled }}
+    - name: {{ $key }}
+      port: {{ $value.port }}
+      targetPort: {{ $value.port }}
+      protocol: {{ $value.protocol }}
+    {{- end }}
+    {{- end }}
+    {{- end }}
+  selector:
+    {{- include "app.selectorLabels" . | nindent 4 }}
+{{- end -}}

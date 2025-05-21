@@ -1,0 +1,525 @@
+# -----------------------------------------------------------------------------
+# -- Global
+# -----------------------------------------------------------------------------
+# This is to override the chart name.
+nameOverride: ""        # Defaults to <.Chart.Name>
+fullnameOverride: ""    # Defaults to <.Release.Name>-<.Chart.Name>
+
+global:
+  # Local timezone
+  # @default -- "Europe/Amsterdam"
+  timezone: Europe/Amsterdam
+
+  # Storage request for the config folder
+  configStorage: 3Gi
+
+  # Change to the amount of agent nodes used for storage
+  configReplicas: 3
+
+  # Database name
+  # @default -- "authentik"
+  databaseName: authentik
+
+  # Database username
+  # @default -- "authentik"
+  databaseUsername: authentik
+
+  # Database password
+  # @default -- "Pl3@s3Ch@ng3M3!"
+  databasePassword: Pl3@s3Ch@ng3M3!
+
+  # Authentik configuration
+  authentik:
+    # Log level
+    # @default -- "info"
+    logLevel: info
+
+    # Cookie domain
+    # @default -- "example.com"
+    cookieDomain: example.com
+
+    # Trusted proxy CIDR's
+    # @default -- "127.0.0.1/32,10.0.0.0/8,192.168.0.0/16,172.16.0.0/12"
+    proxyCIDRs: "127.0.0.1/32,10.0.0.0/8,192.168.0.0/16,172.16.0.0/12"
+
+    # Secret key used for cookie singing and unique user IDs
+    # @default -- "PleaseGenerateA50CharKey"
+    secretKey: PleaseGenerateA50CharKey
+
+    # Email configuration
+    emailHost: ""
+    emailPort: "587"
+    emailUseTLS: "true"
+    emailUseSSL: "false"
+    emailFrom: "Authentik <authentik@example.com>"
+    emailUsername: ""
+    emailPassword: ""
+
+  # GeoIP configuration
+  # Sign up here: https://www.maxmind.com/en/geolite2/signup
+  geoip:
+    accountId: ""
+    licenseKey: ""
+
+# -----------------------------------------------------------------------------
+# -- Configure Pods and Containers
+# -----------------------------------------------------------------------------
+containers:
+  # Key of the container (e.g. app, db, broker). Used for naming objects.
+  db:
+    # Define the container as a initContainer.
+    init:
+      enabled: true
+      restartPolicy: Always
+
+    securityContext: {}
+
+    # This sets the container image. 
+    # Ref: https://kubernetes.io/docs/concepts/containers/images/
+    image:
+      repository: postgres
+      # This sets the pull policy for images.
+      pullPolicy: Always
+      # Overrides the image tag. Default is the chart appVersion.
+      tag: 16-alpine
+
+    # This is for setting up a service
+    # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
+    service:
+      # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
+      psql:
+        enabled: false
+        port: 5432
+        protocol: TCP
+        ingress: false
+
+    # This is to setup the liveness and readiness probes 
+    # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+    livenessProbe: {}
+    readinessProbe: {}
+
+    # Additional command line arguments for the container.
+    args: []
+
+    # Environment variables to pass to the deployed container. A specific ConfigMap is created.
+    # @default -- `[]` (See [values.yaml])
+    env:
+      PG_TZ: "{{ .Values.global.timezone }}"
+      POSTGRES_DB: "{{ .Values.global.databaseName }}"
+    
+    # Use ConfigMap from another container (key). Overrides `env`.
+    # @default -- `""` (See [values.yaml])
+    envUse: ""
+
+    # Secret variables to pass to the deployed container. A specific Secret is created.
+    # @default -- `[]` (See [values.yaml])
+    secret:
+      POSTGRES_USER: "{{ .Values.global.databaseUsername }}"
+      POSTGRES_PASSWORD: "{{ .Values.global.databasePassword }}"
+
+    # Use ConfigMap from another container (key). Overrides `secret`.
+    # @default -- `""` (See [values.yaml])
+    secretUse: ""
+
+    # Additional volumeMounts on the output Deployment definition.
+    volumeMounts:
+      config:
+        "postgresql": "/var/lib/postgresql/data"
+
+    resources: {}
+
+  broker:
+    # Define the container as a initContainer.
+    init:
+      enabled: true
+      restartPolicy: Always
+
+    securityContext: {}
+
+    # This sets the container image. 
+    # Ref: https://kubernetes.io/docs/concepts/containers/images/
+    image:
+      repository: redis
+      # This sets the pull policy for images.
+      pullPolicy: Always
+      # Overrides the image tag. Default is the chart appVersion.
+      tag: alpine
+
+    # This is for setting up a service
+    # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
+    service:
+      # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
+      redis:
+        enabled: false
+        port: 6379
+        protocol: TCP
+        ingress: false
+
+    # This is to setup the liveness and readiness probes 
+    # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+    livenessProbe: {}
+    readinessProbe: {}
+
+    # Additional command line arguments for the container.
+    args:
+    - "--save 60 1"
+    - "--loglevel warning"
+
+    # Environment variables to pass to the deployed container. A specific ConfigMap is created.
+    # @default -- `{}` (See [values.yaml])
+    env: {}
+    
+    # Use ConfigMap from another container (key). Overrides `env`.
+    # @default -- `""` (See [values.yaml])
+    envUse: ""
+
+    # Secret variables to pass to the deployed container. A specific Secret is created.
+    # @default -- `{}` (See [values.yaml])
+    secret: {}
+
+    # Use ConfigMap from another container (key). Overrides `secret`.
+    # @default -- `""` (See [values.yaml])
+    secretUse: ""
+
+    # Additional volumeMounts on the output Deployment definition.
+    volumeMounts:
+      config:
+        "redis": "/data"
+
+    resources: {}
+
+  server:
+    # Define the container as a initContainer.
+    init:
+      enabled: false
+      restartPolicy: Always
+
+    securityContext: {}
+
+    # This sets the container image. 
+    # Ref: https://kubernetes.io/docs/concepts/containers/images/
+    image:
+      repository: ghcr.io/goauthentik/server
+      # This sets the pull policy for images.
+      pullPolicy: Always
+      # Overrides the image tag. Default is the chart appVersion.
+      tag: ""
+
+    # This is for setting up a service
+    # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
+    service:
+      # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
+      http:
+        enabled: true
+        port: 9000
+        protocol: TCP
+        ingress: true
+
+    # This is to setup the liveness and readiness probes 
+    # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 9000
+      initialDelaySeconds: 15
+      periodSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 9000
+      initialDelaySeconds: 15
+      periodSeconds: 10
+
+    # Additional command line arguments for the container.
+    args:
+      - server
+
+    # Environment variables to pass to the deployed container. A specific ConfigMap is created.
+    # @default -- `[]` (See [values.yaml])
+    # Ref: https://docs.authentik.app/self-hosting/environment-variables
+    env:
+      TZ: "{{ .Values.global.timezone }}"
+      AUTHENTIK_REDIS__HOST: localhost
+      AUTHENTIK_POSTGRESQL__HOST: localhost
+      AUTHENTIK_POSTGRESQL__NAME: "{{ .Values.global.databaseName }}"
+      AUTHENTIK_DISABLE_STARTUP_ANALYTICS: "true"
+      AUTHENTIK_DISABLE_UPDATE_CHECK: "false"
+      AUTHENTIK_ERROR_REPORTING__ENABLED: "false"
+      AUTHENTIK_LOG_LEVEL: "{{ .Values.global.authentik.logLevel }}"
+      AUTHENTIK_COOKIE_DOMAIN: "{{ .Values.global.authentik.cookieDomain }}"
+      AUTHENTIK_LISTEN__TRUSTED_PROXY_CIDRS: "{{ .Values.global.authentik.proxyCIDRs }}"
+      AUTHENTIK_EMAIL__HOST: "{{ .Values.global.authentik.emailHost }}"
+      AUTHENTIK_EMAIL__PORT: "{{ .Values.global.authentik.emailPort }}"
+      AUTHENTIK_EMAIL__USE_TLS: "{{ .Values.global.authentik.emailUseTLS }}"
+      AUTHENTIK_EMAIL__USE_SSL: "{{ .Values.global.authentik.emailUseSSL }}"
+      AUTHENTIK_EMAIL__TIMEOUT: "10"
+      AUTHENTIK_EMAIL__FROM: "{{ .Values.global.authentik.emailFrom }}"
+
+    # Use ConfigMap from another container (key). Overrides `env`.
+    # @default -- `""` (See [values.yaml])
+    envUse: ""
+
+    # Secret variables to pass to the deployed container. A specific Secret is created.
+    # @default -- `[]` (See [values.yaml])
+    # Ref: https://docs.authentik.app/self-hosting/environment-variables
+    secret:
+      AUTHENTIK_POSTGRESQL__USER: "{{ .Values.global.databaseUsername }}"
+      AUTHENTIK_POSTGRESQL__PASSWORD: "{{ .Values.global.databasePassword }}"
+      AUTHENTIK_SECRET_KEY: "{{ .Values.global.authentik.secretKey }}"
+      AUTHENTIK_EMAIL__USERNAME: "{{ .Values.global.authentik.emailUsername }}"
+      AUTHENTIK_EMAIL__PASSWORD: "{{ .Values.global.authentik.emailPassword }}"
+
+    # Use ConfigMap from another container (key). Overrides `secret`.
+    # @default -- `""` (See [values.yaml])
+    secretUse: ""
+
+    # Additional volumeMounts on the output Deployment definition.
+    volumeMounts:
+      config:
+        "authentik/media": "/media"
+        "authentik/templates": "/templates"
+        "geoip": "/geoip"
+
+    resources: {}
+
+  worker:
+    # Define the container as a initContainer.
+    init:
+      enabled: false
+      restartPolicy: Always
+
+    securityContext: {}
+
+    # This sets the container image. 
+    # Ref: https://kubernetes.io/docs/concepts/containers/images/
+    image:
+      repository: ghcr.io/goauthentik/server
+      # This sets the pull policy for images.
+      pullPolicy: Always
+      # Overrides the image tag. Default is the chart appVersion.
+      tag: ""
+
+    # This is for setting up a service
+    # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
+    service: {}
+
+    # This is to setup the liveness and readiness probes 
+    # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+    livenessProbe: {}
+    readinessProbe: {}
+
+    # Additional command line arguments for the container.
+    args:
+      - worker
+
+    # Environment variables to pass to the deployed container. A specific ConfigMap is created.
+    # @default -- `{}` (See [values.yaml])
+    # Ref: https://docs.authentik.app/self-hosting/environment-variables
+    env: {}
+
+    # Use ConfigMap from another container (key). Overrides `env`.
+    # @default -- `""` (See [values.yaml])
+    envUse: server
+
+    # Secret variables to pass to the deployed container. A specific Secret is created.
+    # @default -- `{}` (See [values.yaml])
+    # Ref: https://docs.authentik.app/self-hosting/environment-variables
+    secret: {}
+
+    # Use ConfigMap from another container (key). Overrides `secret`.
+    # @default -- `""` (See [values.yaml])
+    secretUse: server
+
+    # Additional volumeMounts on the output Deployment definition.
+    volumeMounts:
+      config:
+        "authentik/media": "/media"
+        "authentik/templates": "/templates"
+        "geoip": "/geoip"
+
+    resources: {}
+
+  geoip:
+    # Define the container as a initContainer.
+    init:
+      enabled: false
+      restartPolicy: Always
+
+    securityContext: {}
+
+    # This sets the container image. 
+    # Ref: https://kubernetes.io/docs/concepts/containers/images/
+    image:
+      repository: ghcr.io/maxmind/geoipupdate
+      # This sets the pull policy for images.
+      pullPolicy: Always
+      # Overrides the image tag. Default is the chart appVersion.
+      tag: latest
+
+    # This is for setting up a service
+    # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
+    service: {}
+
+    # This is to setup the liveness and readiness probes 
+    # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+    livenessProbe: {}
+    readinessProbe: {}
+
+    # Additional command line arguments for the container.
+    args: []
+
+    # Environment variables to pass to the deployed container. A specific ConfigMap is created.
+    # @default -- `[]` (See [values.yaml])
+    # Ref: https://docs.authentik.app/self-hosting/environment-variables
+    env:
+      TZ: "{{ .Values.global.timezone }}"
+      GEOIPUPDATE_EDITION_IDS: "GeoLite2-City GeoLite2-ASN"
+      GEOIPUPDATE_FREQUENCY: "8"
+
+    # Use ConfigMap from another container (key). Overrides `env`.
+    # @default -- `""` (See [values.yaml])
+    envUse: ""
+
+    # Secret variables to pass to the deployed container. A specific Secret is created.
+    # @default -- `[]` (See [values.yaml])
+    # Ref: https://docs.authentik.app/self-hosting/environment-variables
+    secret:
+      GEOIPUPDATE_ACCOUNT_ID: "{{ .Values.global.geoip.accountId }}"
+      GEOIPUPDATE_LICENSE_KEY: "{{ .Values.global.geoip.licenseKey }}"
+
+
+    # Use ConfigMap from another container (key). Overrides `secret`.
+    # @default -- `""` (See [values.yaml])
+    secretUse: ""
+
+    # Additional volumeMounts on the output Deployment definition.
+    volumeMounts:
+      config:
+        "geoip": "/usr/share/GeoIP"
+
+    resources: {}
+
+# This is for the secrets for pulling an image from a private repository
+# Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+imagePullSecrets: []
+
+# This is for setting Kubernetes Annotations to a Pod.
+# Ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+podAnnotations: {}
+
+# This is for setting Kubernetes Labels to a Pod.
+# Ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+# -----------------------------------------------------------------------------
+# -- Security
+# -----------------------------------------------------------------------------
+# This section builds out the service account.
+# Ref: https://kubernetes.io/docs/concepts/security/service-accounts/
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# -----------------------------------------------------------------------------
+# -- Services, Load Balancing, and Networking
+# -----------------------------------------------------------------------------
+# Define the pods DNS configuration. 
+# Ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
+dnsConfig:
+  options:
+    - name: ndots
+      value: "1"
+
+# This is for setting up a service.
+# Ref: https://kubernetes.io/docs/concepts/services-networking/service/
+service:
+  type: ClusterIP
+
+# This block is for setting up the Traefik ingress. 
+# Ref: https://doc.traefik.io/traefik/routing/providers/kubernetes-crd/#kind-ingressroutetcp
+ingress:
+  enabled: true
+
+  # Kind of ingress route (IngressRoute or IngressRouteTCP).
+  # @default -- 'IngressRoute' (See [values.yaml])
+  kind: IngressRoute
+
+  # Domainnames (format: - <domain>.<tld>).
+  domains:
+    - example.com
+
+  # Override the subdomain.
+  # @default -- '""' (See [values.yaml])
+  subdomainOverride: ""
+
+  # Entry point of the route.
+  # @default -- 'websecure' (See [values.yaml])
+  entryPoints:
+    - websecure
+
+  # Attach middlewares to ingress route
+  # These need to be present within the namespace
+  # @default -- `secure-headers` (See [values.yaml])
+  middlewares:
+    - secure-headers
+
+  # The TLS secretName for the certificate 
+  # Defaults to the Traefik wildcard certificate when ommited
+  # @default -- '""' (See [values.yaml])
+  tlsSecret: ""
+  
+  # Ingress annotations.
+  annotations: {}
+
+# -----------------------------------------------------------------------------
+# -- Storage
+# -----------------------------------------------------------------------------
+# When mounting volumes to the pod, define the secret and namespace where the credentials are located. For now only needed for SMB.
+credentials: {}
+  # smb:
+  #   secret: smb-credentials
+  #   namespace: default
+
+# Additional volumes on the output Deployment definition.
+# Longhorn as storage required for persistent config store.
+volumes:
+  config:
+    className: longhorn
+    accessModes: 
+      - ReadWriteOnce
+    storage: "{{ .Values.global.configStorage }}"
+    numberOfReplicas: "{{ .Values.global.configReplicas }}"
+
+# -----------------------------------------------------------------------------
+# -- Scheduling, Preemption and Eviction
+# -----------------------------------------------------------------------------
+# Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+nodeSelector: {}
+
+# Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+tolerations: []
+
+# Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
+affinity: {}
+
+# -----------------------------------------------------------------------------
+# -- Workloads
+# -----------------------------------------------------------------------------
+# This will set the replicaset count. 
+# Ref: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+replicaCount: 1
+
+# This section is for setting up autoscaling. 
+# Ref: https://kubernetes.io/docs/concepts/workloads/autoscaling/
+autoscaling:
+  enabled: false
