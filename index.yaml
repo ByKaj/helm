@@ -1235,6 +1235,26 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/tautulli-1.0.0/tautulli-1.0.0.tgz
     version: 1.0.0
+  uptime-kuma:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-21T18:45:00.599679133Z"
+    description: Uptime Kuma is a self-hosted monitoring tool that tracks the availability
+      and response time of websites, APIs, and other network services in real-time.
+      It features a modern dashboard with status pages, flexible notification options,
+      and detailed uptime reports to help you quickly identify and respond to service
+      outages.
+    digest: deb94c3d1cb56dd51303566c33f8412d034da3c00c518600ea6b67989cd7b64a
+    home: https://uptimekuma.org
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/uptime-kuma.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: uptime-kuma
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/uptime-kuma-1.1.0/uptime-kuma-1.1.0.tgz
+    version: 1.1.0
   whisparr:
   - apiVersion: v2
     appVersion: latest
@@ -1312,4 +1332,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/whisparr-1.0.0/whisparr-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-21T17:07:33.967293404Z"
+generated: "2025-05-21T18:45:00.599811198Z"
