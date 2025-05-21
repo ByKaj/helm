@@ -1,5 +1,24 @@
 apiVersion: v1
 entries:
+  authentik:
+  - apiVersion: v2
+    appVersion: 2025.4.1
+    created: "2025-05-21T20:16:25.265927831Z"
+    description: Authentik is an open-source Identity Provider (IdP) and Single Sign-On
+      (SSO) solution built with security at its core, allowing organizations to manage
+      authentication and authorization across applications without relying on third-party
+      services.
+    digest: 4fcdfa117ffc26f9191fd592b007c1f0a07884d0379fec93f030a3cfb0e9cba7
+    home: https://goauthentik.io
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/authentik.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: authentik
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/authentik-1.1.0/authentik-1.1.0.tgz
+    version: 1.1.0
   bazarr:
   - apiVersion: v2
     appVersion: latest
@@ -1351,4 +1370,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/whisparr-1.0.0/whisparr-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-21T18:46:31.20337802Z"
+generated: "2025-05-21T20:16:25.266017499Z"
