@@ -1,0 +1,11 @@
+apiVersion: v2
+name: calibre
+version: 1.0.0
+description: Calibre is a comprehensive e-book management software that allows users to organize, convert, and sync e-books across devices, while Calibre-Web is a web-based interface that provides remote access to your Calibre e-book library from any browser.
+type: application
+home: https://calibre-ebook.com
+maintainers:
+  - name: ByKaj
+    url: https://github.com/ByKaj
+icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/calibre.svg
+appVersion: latest
