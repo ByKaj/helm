@@ -71,9 +71,10 @@ containers:
           pathPrefix: "/bar"        # Path prefix (optional)
 
 ingress:
-  example.com:                      # Domainname
-    subdomainOverride: "foo"        # Override the subdomain (optional)
-    tlsSecretOverride: ""           # TLS secret override (optional)
+  domains:
+    example.com:                    # Domainname
+      subdomainOverride: "foo"      # Override the subdomain (optional)
+      tlsSecretOverride: ""         # TLS secret override (optional)
 ```
 
 ## Storage and volume mapping
