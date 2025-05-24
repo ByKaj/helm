@@ -249,6 +249,25 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/dsmr-reader-1.0.1/dsmr-reader-1.0.1.tgz
     version: 1.0.1
+  huntarr:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-24T12:40:22.587263909Z"
+    description: Huntarr is an automated media library management system that continually
+      searches for missing content and quality upgrades across your Sonarr, Radarr,
+      Lidarr, and Readarr libraries, essentially functioning as a compulsive librarian
+      for your media server.
+    digest: 60fdfe25fe4b4aeb147126b3205f703cb4c4d299add9a1c094c307b77e3c2dfb
+    home: https://huntarr.io
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/huntarr.png
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: huntarr
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/huntarr-1.2.0/huntarr-1.2.0.tgz
+    version: 1.2.0
   jellyseerr:
   - apiVersion: v2
     appVersion: latest
@@ -1389,4 +1408,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/whisparr-1.0.0/whisparr-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-23T22:16:58.141256175Z"
+generated: "2025-05-24T12:40:22.587357114Z"
