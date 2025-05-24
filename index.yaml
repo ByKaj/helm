@@ -164,6 +164,24 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/dsmr-reader-1.1.0/dsmr-reader-1.1.0.tgz
     version: 1.1.0
+  homepage:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-24T20:18:46.329235752Z"
+    description: Homepage is a modern, fast, and secure application dashboard that
+      offers integrations with over 100 services, customizable through YAML files
+      or docker labels, with multi-language support.
+    digest: ce261f65589da29de1df913715f0cbe9d9f97c4661df44f51b8a7336003c5972
+    home: https://gethomepage.dev
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/homepage.png
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: homepage
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/homepage-1.2.0/homepage-1.2.0.tgz
+    version: 1.2.0
   huntarr:
   - apiVersion: v2
     appVersion: latest
@@ -764,4 +782,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/whisparr-1.1.0/whisparr-1.1.0.tgz
     version: 1.1.0
-generated: "2025-05-24T15:49:23.895211263Z"
+generated: "2025-05-24T20:18:46.329307536Z"
