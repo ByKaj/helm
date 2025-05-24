@@ -1,0 +1,14 @@
+{{- with .Values.clusterRole -}}
+# ------------------------------
+# -- {{ include "app.name" $ | title }} ClusterRole
+# -- Name: {{ include "app.fullname" $ }}-{{ .name }}
+# ------------------------------
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "app.fullname" $ }}-{{ .name }}
+  labels:
+    {{- include "app.labels" $ | nindent 4 }}
+rules:
+  {{- toYaml .rules | nindent 2 }}
+{{- end -}}

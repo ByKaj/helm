@@ -1,0 +1,325 @@
+# -----------------------------------------------------------------------------
+# -- Global
+# -----------------------------------------------------------------------------
+# This is to override the chart name.
+nameOverride: ""        # Defaults to <.Chart.Name>
+fullnameOverride: ""    # Defaults to <.Release.Name>-<.Chart.Name>
+
+global:
+  # Local timezone
+  # @default -- "Europe/Amsterdam"
+  timezone: Europe/Amsterdam
+
+  # Domainname of the application
+  domainname: example.com
+
+  # Required environment variable to access homepage via a URL other than localhost
+  # Ref: https://gethomepage.dev/installation/#homepage_allowed_hosts
+  allowedHosts: homepage.example.com
+
+  # Homepage configuration, use this to customize your dashboard
+  # Ref: https://gethomepage.dev/configs/
+  configMap:
+    name: config
+    data:
+      kubernetes.yaml: |
+        mode: cluster
+      settings.yaml: ""
+      #settings.yaml: |
+      #  providers:
+      #    longhorn:
+      #      url: https://longhorn.my.network
+      custom.css: ""
+      custom.js: ""
+      bookmarks.yaml: |
+        - Developer:
+            - Github:
+                - abbr: GH
+                  href: https://github.com/
+      services.yaml: |
+        - My First Group:
+            - My First Service:
+                href: http://localhost/
+                description: Homepage is awesome
+        - My Second Group:
+            - My Second Service:
+                href: http://localhost/
+                description: Homepage is the best
+        - My Third Group:
+            - My Third Service:
+                href: http://localhost/
+                description: Homepage is 😎
+      widgets.yaml: |
+        - kubernetes:
+            cluster:
+              show: true
+              cpu: true
+              memory: true
+              showLabel: true
+              label: "cluster"
+            nodes:
+              show: true
+              cpu: true
+              memory: true
+              showLabel: true
+        - resources:
+            backend: resources
+            expanded: true
+            cpu: true
+            memory: true
+            network: default
+        - search:
+            provider: duckduckgo
+            target: _blank
+      docker.yaml: ""
+
+# -----------------------------------------------------------------------------
+# -- Configure Pods and Containers
+# -----------------------------------------------------------------------------
+containers:
+  # Key of the container (e.g. app, db, broker). Used for naming objects.
+  app:
+    # Define the container as a initContainer.
+    init:
+      enabled: false
+      restartPolicy: Always
+
+    securityContext: {}
+
+    # This sets the container image. 
+    # Ref: https://kubernetes.io/docs/concepts/containers/images/
+    image:
+      repository: ghcr.io/gethomepage/homepage
+      # This sets the pull policy for images.
+      pullPolicy: Always
+      # Overrides the image tag. Default is the chart appVersion.
+      tag: ""
+
+    # This is for setting up a service
+    # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
+    service:
+      http:
+        enabled: true
+        port: 3000
+        protocol: TCP
+        ingress:
+          enabled: true
+
+    # This is to setup the liveness and readiness probes
+    # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 3000
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 3000
+      initialDelaySeconds: 5
+      periodSeconds: 10
+
+    # Additional command line arguments for the container.
+    args: []
+
+    # Environment variables to pass to the deployed container. A specific ConfigMap is created.
+    # @default -- `{}` (See [values.yaml])
+    env:
+      TZ: "{{ .Values.global.timezone }}"
+      HOMEPAGE_ALLOWED_HOSTS: "{{ .Values.global.allowedHosts }}"
+
+    # Use ConfigMap from another container (key). Overrides `env`.
+    # @default -- `""` (See [values.yaml])
+    envUse: ""
+    
+    # Secret variables to pass to the deployed container. A specific Secret is created.
+    # @default -- `{}` (See [values.yaml])
+    secret: {}
+
+    # Use ConfigMap from another container (key). Overrides `secret`.
+    # @default -- `""` (See [values.yaml])
+    secretUse: ""
+
+    # Additional volumeMounts on the output Deployment definition.
+    volumeMounts:
+      config:
+        "custom.js": "/app/config/custom.js"
+        "custom.css": "/app/config/custom.css"
+        "bookmarks.yaml": "/app/config/bookmarks.yaml"
+        "kubernetes.yaml": "/app/config/kubernetes.yaml"
+        "services.yaml": "/app/config/services.yaml"
+        "settings.yaml": "/app/config/settings.yaml"
+        "widgets.yaml": "/app/config/widgets.yaml"
+      logs:
+        "logs": "/app/config/logs"
+
+    resources: {}
+
+# This is for the secrets for pulling an image from a private repository
+# Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+imagePullSecrets: []
+
+# This is for setting Kubernetes Annotations to a Pod.
+# Ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+podAnnotations: {}
+
+# This is for setting Kubernetes Labels to a Pod.
+# Ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+# -----------------------------------------------------------------------------
+# -- Security
+# -----------------------------------------------------------------------------
+# This section builds out the service account.
+# Ref: https://kubernetes.io/docs/concepts/security/service-accounts/
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# RBAC rules for to the service account
+# Ref: https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+clusterRole:
+  name: view
+  rules:
+    - apiGroups:
+        - ""
+      resources:
+        - namespaces
+        - pods
+        - nodes
+      verbs:
+        - get
+        - list
+    - apiGroups:
+        - extensions
+        - networking.k8s.io
+      resources:
+        - ingresses
+      verbs:
+        - get
+        - list
+    - apiGroups:
+        - traefik.io
+      resources:
+        - ingressroutes
+      verbs:
+        - get
+        - list
+    - apiGroups:
+        - gateway.networking.k8s.io
+      resources:
+        - httproutes
+        - gateways
+      verbs:
+        - get
+        - list
+    - apiGroups:
+        - metrics.k8s.io
+      resources:
+        - nodes
+        - pods
+      verbs:
+        - get
+        - list
+
+# -----------------------------------------------------------------------------
+# -- Services, Load Balancing, and Networking
+# -----------------------------------------------------------------------------
+# Define the pods DNS configuration. 
+# Ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
+dnsConfig:
+  options:
+    - name: ndots
+      value: "1"
+
+# This is for setting up a service.
+# Ref: https://kubernetes.io/docs/concepts/services-networking/service/
+service:
+  # This sets the service type.
+  type: ClusterIP
+
+# This block is for setting up the Traefik ingress. 
+# Ref: https://doc.traefik.io/traefik/routing/providers/kubernetes-crd/#kind-ingressroutetcp
+ingress:
+  enabled: true
+
+  # Kind of ingress route (IngressRoute or IngressRouteTCP).
+  # @default -- 'IngressRoute' (See [values.yaml])
+  kind: IngressRoute
+
+  # Domainnames (format: <domain>.<tld>).
+  # @default -- "{}"
+  domains: {} 
+    # example.com:
+    #   # Override the subdomain (optional).
+    #   # @default -- "<app.fullname>"
+    #   subdomainOverride: ""
+    #   # TLS secret override (optional).
+    #   # @default -- "<domain>-<tld>-tls"
+    #   tlsSecretOverride: ""
+      
+  # Entry point of the route.
+  # @default -- 'websecure' (See [values.yaml])
+  entryPoints:
+    - websecure
+
+  # Attach middlewares to ingress route
+  # These need to be present within the namespace
+  # @default -- `secure-headers` (See [values.yaml])
+  middlewares:
+    - secure-headers
+
+  # Ingress annotations.
+  annotations: {}
+
+# -----------------------------------------------------------------------------
+# -- Storage
+# -----------------------------------------------------------------------------
+# When mounting volumes to the pod, define the secret and namespace where the credentials are located. For now only needed for SMB.
+credentials: {}
+  # smb:
+  #   secret: smb-credentials
+  #   namespace: default
+
+# Additional volumes on the output Deployment definition.
+# Longhorn as storage required for persistent config store.
+volumes:
+  config:
+    className: configmap
+  logs:
+    className: local
+
+# -----------------------------------------------------------------------------
+# -- Scheduling, Preemption and Eviction
+# -----------------------------------------------------------------------------
+# Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+nodeSelector: {}
+
+# Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+tolerations: []
+
+# Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
+affinity: {}
+
+# -----------------------------------------------------------------------------
+# -- Workloads
+# -----------------------------------------------------------------------------
+# This will set the replicaset count. 
+# Ref: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+replicaCount: 1
+
+# This section is for setting up autoscaling. 
+# Ref: https://kubernetes.io/docs/concepts/workloads/autoscaling/
+autoscaling:
+  enabled: false

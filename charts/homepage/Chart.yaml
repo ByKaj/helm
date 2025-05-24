@@ -1,0 +1,11 @@
+apiVersion: v2
+name: homepage
+version: 1.2.0
+description: Homepage is a modern, fast, and secure application dashboard that offers integrations with over 100 services, customizable through YAML files or docker labels, with multi-language support.
+type: application
+home: https://gethomepage.dev
+maintainers:
+  - name: ByKaj
+    url: https://github.com/ByKaj
+icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/homepage.png
+appVersion: latest
