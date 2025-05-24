@@ -1,0 +1,79 @@
+{{- if .Values.ingress.enabled -}}
+{{- if .Values.global.domainname -}}
+  {{- $_ := set .Values.ingress.domains .Values.global.domainname (dict "subdomainOverride" "" "tlsSecretOverride" "") -}}
+{{- end -}}
+{{- $appFullname := (include "app.fullname" .) -}}
+{{- $kind := .Values.ingress.kind -}}
+{{- $pos := 0 -}}
+{{- $ingressName := "" -}}
+{{- $matchRule := "" -}}
+{{- $middlewares := .Values.ingress.middlewares -}}
+{{- $containers := .Values.containers -}}
+{{- $totalDomains := len .Values.ingress.domains -}}
+{{- if (eq $kind "IngressRouteTCP") -}}
+  {{- $matchRule = "HostSNI" -}}
+{{- else -}}
+  {{- $matchRule = "Host" -}}
+{{- end -}}
+{{- range $domain, $domainOptions := .Values.ingress.domains -}}
+{{- $pos = (add 1 $pos) -}}
+{{- if (eq $totalDomains 1) -}}
+  {{- $ingressName = printf "%s-rtr" $appFullname -}}
+{{- else -}}
+  {{- $ingressName = printf "%s-rtr-%d" $appFullname $pos -}}
+{{- end -}}
+{{- $hostname := printf "%s.%s" (coalesce $domainOptions.subdomainOverride $appFullname) $domain -}}
+---
+# ------------------------------
+# -- {{ include "app.name" $ | title }} {{ $kind }}
+# -- Name: {{ $ingressName }}
+# ------------------------------
+apiVersion: traefik.io/v1alpha1
+kind: {{ $kind }}
+metadata:
+  name: {{ $ingressName }}
+  labels:
+    {{- include "app.labels" $ | nindent 4 }}
+  annotations:
+    kubernetes.io/ingress.class: traefik-external
+    {{- with $.Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  {{- with $.Values.ingress.entryPoints }}
+  entryPoints:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  routes:
+    {{- range $containerKey, $container := $containers }}
+    {{- range $serviceKey, $service := $container.service }}
+    {{- if and ($service.enabled) ($service.ingress.enabled) }}
+    {{- if ($service.ingress.pathPrefix) }}
+    - match: {{ printf "%s(`%s`) && PathPrefix(`%s`)" $matchRule $hostname $service.ingress.pathPrefix }}
+    {{- else }}
+    - match: {{ printf "%s(`%s`)" $matchRule $hostname }}
+    {{- end }}
+      {{- if (eq $kind "IngressRoute") }}
+      kind: Rule
+      {{- end }}
+      services:
+        - name: {{ $appFullname }}-svc
+          port: {{ $service.port }}
+      {{- with $middlewares }}
+      middlewares:
+        {{- range . }}
+        - name: {{ . }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+    {{- end }}
+    {{- end }}
+  {{- if $domainOptions.tlsSecretOverride }}
+  tls:
+    secretName: {{ $domainOptions.tlsSecretOverride }}
+  {{- else }}
+  tls:
+    secretName: {{ $domain | replace "." "-" }}-tls
+  {{- end }}
+{{ end }}
+{{ end }}

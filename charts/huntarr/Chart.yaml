@@ -1,0 +1,11 @@
+apiVersion: v2
+name: huntarr
+version: 1.2.0
+description: Huntarr is an automated media library management system that continually searches for missing content and quality upgrades across your Sonarr, Radarr, Lidarr, and Readarr libraries, essentially functioning as a compulsive librarian for your media server.
+type: application
+home: https://huntarr.io
+maintainers:
+  - name: ByKaj
+    url: https://github.com/ByKaj
+icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/huntarr.png
+appVersion: latest
