@@ -59,6 +59,24 @@ entries:
   calibre:
   - apiVersion: v2
     appVersion: latest
+    created: "2025-05-24T15:49:23.786330326Z"
+    description: Calibre is a comprehensive e-book management software that allows
+      users to organize, convert, and sync e-books across devices, while Calibre-Web
+      is a web-based interface that provides remote access to your Calibre e-book
+      library from any browser.
+    digest: 141c7e7eefa579c503590523ecf160db0a8960f677af36c34d2df558bd8de835
+    home: https://calibre-ebook.com
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/calibre.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: calibre
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/calibre-1.2.2/calibre-1.2.2.tgz
+    version: 1.2.2
+  - apiVersion: v2
+    appVersion: latest
     created: "2025-05-24T14:29:09.021024567Z"
     description: Calibre is a comprehensive e-book management software that allows
       users to organize, convert, and sync e-books across devices, while Calibre-Web
@@ -147,6 +165,24 @@ entries:
     - https://github.com/ByKaj/helm/releases/download/dsmr-reader-1.1.0/dsmr-reader-1.1.0.tgz
     version: 1.1.0
   huntarr:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-24T15:49:23.895144389Z"
+    description: Huntarr is an automated media library management system that continually
+      searches for missing content and quality upgrades across your Sonarr, Radarr,
+      Lidarr, and Readarr libraries, essentially functioning as a compulsive librarian
+      for your media server.
+    digest: ee3c606e1cc93904a595bb1b30129485a109766a5a31dbb83927f9e81a3f7209
+    home: https://huntarr.io
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/huntarr.png
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: huntarr
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/huntarr-1.2.1/huntarr-1.2.1.tgz
+    version: 1.2.1
   - apiVersion: v2
     appVersion: latest
     created: "2025-05-24T12:40:22.587263909Z"
@@ -728,4 +764,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/whisparr-1.1.0/whisparr-1.1.0.tgz
     version: 1.1.0
-generated: "2025-05-24T14:29:09.021075763Z"
+generated: "2025-05-24T15:49:23.895211263Z"
