@@ -113,6 +113,24 @@ entries:
   calibre:
   - apiVersion: v2
     appVersion: latest
+    created: "2025-05-24T13:25:39.734824553Z"
+    description: Calibre is a comprehensive e-book management software that allows
+      users to organize, convert, and sync e-books across devices, while Calibre-Web
+      is a web-based interface that provides remote access to your Calibre e-book
+      library from any browser.
+    digest: 0204fbc01a494791f1fa0045002f6a8e4db94bd691ab6c480a110914b6c423b0
+    home: https://calibre-ebook.com
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/calibre.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: calibre
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/calibre-1.2.0/calibre-1.2.0.tgz
+    version: 1.2.0
+  - apiVersion: v2
+    appVersion: latest
     created: "2025-05-23T22:16:58.141123647Z"
     description: Calibre is a comprehensive e-book management software that allows
       users to organize, convert, and sync e-books across devices, while Calibre-Web
@@ -1408,4 +1426,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/whisparr-1.0.0/whisparr-1.0.0.tgz
     version: 1.0.0
-generated: "2025-05-24T12:40:22.587357114Z"
+generated: "2025-05-24T13:25:39.734970054Z"
