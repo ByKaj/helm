@@ -16,6 +16,9 @@ global:
   # Change to the amount of agent nodes used for storage
   configReplicas: 3
 
+  # Domainname of the application
+  domainname: example.com
+
   # Adds the ability to perform ebook conversion
   calibreWebMods: "linuxserver/mods:universal-calibre"
 
@@ -125,7 +128,7 @@ containers:
     # This is for setting up a service
     # Ref: https://kubernetes.io/docs/concepts/services-networking/service/
     service:
-      http:
+      http-web:
         enabled: true
         port: 8083
         protocol: TCP
@@ -138,13 +141,13 @@ containers:
       httpGet:
         path: /
         port: 8083
-      initialDelaySeconds: 15
+      initialDelaySeconds: 5
       periodSeconds: 10
     readinessProbe:
       httpGet:
         path: /
         port: 8083
-      initialDelaySeconds: 15
+      initialDelaySeconds: 5
       periodSeconds: 10
 
     # Additional command line arguments for the container.
@@ -235,13 +238,16 @@ ingress:
   # @default -- 'IngressRoute' (See [values.yaml])
   kind: IngressRoute
 
-  # Domainnames (format: - <domain>.<tld>).
-  domains:
-    - example.com
-
-  # Override the subdomain.
-  # @default -- '""' (See [values.yaml])
-  subdomainOverride: ""
+  # Domainnames (format: <domain>.<tld>).
+  # @default -- "{}"
+  domains: {} 
+    # example.com:
+    #   # Override the subdomain (optional).
+    #   # @default -- "<app.fullname>"
+    #   subdomainOverride: ""
+    #   # TLS secret override (optional).
+    #   # @default -- "<domain>-<tld>-tls"
+    #   tlsSecretOverride: ""
 
   # Entry point of the route.
   # @default -- 'websecure' (See [values.yaml])
@@ -253,11 +259,6 @@ ingress:
   # @default -- `secure-headers` (See [values.yaml])
   middlewares:
     - secure-headers
-
-  # The TLS secretName for the certificate 
-  # Defaults to the Traefik wildcard certificate when ommited
-  # @default -- '""' (See [values.yaml])
-  tlsSecret: ""
   
   # Ingress annotations.
   annotations: {}

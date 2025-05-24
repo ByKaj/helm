@@ -1,8 +1,8 @@
 {{ include "app.name" $ | title }} has been installed!
 {{ if .Values.ingress.enabled }}
 When the deployment is ready (give it a moment), your application will be available on:
-{{- range $domain := .Values.ingress.domains }}
-- {{ if (eq $.Values.ingress.kind "IngressRoute") }}https://{{ end }}{{ coalesce $.Values.ingress.subdomainOverride (include "app.fullname" $) }}.{{ $domain }}
+{{- range $domain, $domainOptions := .Values.ingress.domains }}
+- {{ if (eq $.Values.ingress.kind "IngressRoute") }}https://{{ end }}{{ printf "%s.%s" (coalesce $domainOptions.subdomainOverride (include "app.fullname" $)) $domain }}
 {{- end }}
 
 Make sure to update your DNS to make the domains resolve to the IP of your Load Balancer where Traefik is listening.

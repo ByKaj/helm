@@ -1,26 +1,28 @@
 {{- if .Values.ingress.enabled -}}
+{{- if .Values.global.domainname -}}
+  {{- $_ := set .Values.ingress.domains .Values.global.domainname (dict "subdomainOverride" "" "tlsSecretOverride" "") -}}
+{{- end -}}
 {{- $appFullname := (include "app.fullname" .) -}}
 {{- $kind := .Values.ingress.kind -}}
-{{- $subdomainOverride := .Values.ingress.subdomainOverride -}}
+{{- $pos := 0 -}}
+{{- $ingressName := "" -}}
+{{- $matchRule := "" -}}
 {{- $middlewares := .Values.ingress.middlewares -}}
 {{- $containers := .Values.containers -}}
 {{- $totalDomains := len .Values.ingress.domains -}}
-{{- $matchRule := "" -}}
 {{- if (eq $kind "IngressRouteTCP") -}}
   {{- $matchRule = "HostSNI" -}}
 {{- else -}}
   {{- $matchRule = "Host" -}}
 {{- end -}}
-{{- $pos := 0 -}}
-{{- $ingressName := "" -}}
-{{- range $domain := .Values.ingress.domains -}}
+{{- range $domain, $domainOptions := .Values.ingress.domains -}}
 {{- $pos = (add 1 $pos) -}}
 {{- if (eq $totalDomains 1) -}}
-  {{- $ingressName = (cat $appFullname "-rtr" | nospace) -}}
+  {{- $ingressName = printf "%s-rtr" $appFullname -}}
 {{- else -}}
-  {{- $ingressName = (cat $appFullname "-rtr-" $pos | nospace) -}}
+  {{- $ingressName = printf "%s-rtr-%d" $appFullname $pos -}}
 {{- end -}}
-{{- $hostname := (cat (coalesce $subdomainOverride $appFullname) "." $domain | nospace) -}}
+{{- $hostname := printf "%s.%s" (coalesce $domainOptions.subdomainOverride $appFullname) $domain -}}
 ---
 # ------------------------------
 # -- {{ include "app.name" $ | title }} {{ $kind }}
@@ -66,9 +68,9 @@ spec:
     {{- end }}
     {{- end }}
     {{- end }}
-  {{- if $.Values.ingress.tlsSecret }}
+  {{- if $domainOptions.tlsSecretOverride }}
   tls:
-    secretName: {{ $.Values.ingress.tlsSecret }}
+    secretName: {{ $domainOptions.tlsSecretOverride }}
   {{- else }}
   tls:
     secretName: {{ $domain | replace "." "-" }}-tls

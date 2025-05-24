@@ -1,11 +1,23 @@
 <p align="center">
     <img src="https://cdn.jsdelivr.net/gh/selfhst/icons/svg/calibre.svg" height="120" alt="Calibre logo">
+    <img src="https://cdn.jsdelivr.net/gh/selfhst/icons/svg/calibre-web.svg" height="120" alt="Calibre-Web logo">
 </p>
 
-# Calibre
+# Calibre & Calibre-Web
 *Calibre is a comprehensive e-book management software that allows users to organize, convert, and sync e-books across devices, while Calibre-Web is a web-based interface that provides remote access to your Calibre e-book library from any browser.*
 
-**Homepage:** <https://calibre-ebook.com>
+**Homepage:** <https://calibre-ebook.com> & <https://github.com/janeczku/calibre-web>
+
+<details>
+<summary><strong>Table of Contents</strong> (click to expand)</summary>
+
+1. [Prerequisites](#prerequisites)
+2. [Usage](#usage)
+3. [Environment and secret variables](#environment-and-secret-variables)
+4. [Domainnames and path prefixes](#domainnames-and-path-prefixes)
+5. [Storage and volume mapping](#storage-and-volume-mapping)
+
+</details>
 
 ## Prerequisites
 This application requires:
@@ -14,7 +26,7 @@ This application requires:
 - The SMB credentials stored in the secret `smb-credentials` in the `default` namespace.
 
 ## Usage
-Make a `values.yaml` file with the following (minimal) content and change the values to match your environment. For all the possible configuration overrides see [values.yaml](https://github.com/ByKaj/helm/blob/main/charts/calibre/values.yaml).
+Create a `values.yaml` file with the following (minimal) content and change the values to match your environment. For all possible configuration overrides, see the default [values.yaml](https://github.com/ByKaj/helm/blob/main/charts/calibre/values.yaml) in the chart.
 ```yaml
 global:
   # Local timezone
@@ -26,6 +38,9 @@ global:
   # Change to the amount of agent nodes used for storage
   configReplicas: 3
 
+  # Domainname of the application
+  domainname: example.com
+
   # Adds the ability to perform ebook conversion
   calibreWebMods: "linuxserver/mods:universal-calibre"
 
@@ -33,17 +48,9 @@ global:
   books:
     # Mount path in the container
     mountPath: /books
-    # Source on the SMB share
+    # Source on the SMB share, subPath is optional
     source: //SERVER/Media
     subPath: Books
-
-ingress:
-  # Your domain name(s)
-  domains: 
-    - example.com
-
-  # The subdomain of the domain (e.g. `my-app`, defaults to `app.fullname`)
-  subdomainOverride: ""
 ```
 
 Finally, install the chart:
@@ -56,7 +63,9 @@ helm uninstall calibre
 ```
 
 ## Environment and secret variables
-You can add additional (or overwrite existing) environment or secret variables to the contianers in a pod by adding the following lines to `values.yaml`:
+![Static Badge](https://img.shields.io/badge/Version-%3E%3D_1.1.0-white?style=flat&labelColor=lightgray)
+
+You can add or overwrite environment and secret variables to the containers in a pod by adding the following lines to` values.yaml`:
 ```yaml
 containers:
   app:                              # Container reference key
@@ -66,14 +75,41 @@ containers:
       MY_SECRET_VAR: "bar"
 ```
 
+## Domainnames and path prefixes
+![Static Badge](https://img.shields.io/badge/Version-%3E%3D_1.2.0-white?style=flat&labelColor=lightgray)
+
+By default, the chart generates a FQDN based on the chart and instance name combined with the supplied `global.domainname`. For example: `test-myapp.example.com`, where `test` is the instance name, `myapp` is the chart name, and `example.com` is the supplied domainname. When the instance name is the same as the chart name, it uses only the chart name to generate the FQDN. It then binds a wildcard certificate in an existing secret named `example-com-tls` to the ingress route.
+
+For more fine-grained control over this process, you can use the `ingress.domains` and `service` configuration overrides. When using this method, leave `global.domainname` empty.
+
+In the following example the application is available at `https://foo.example.com/bar`:
+```yaml
+global:
+  domainname: ""                    # Empty the domainname in global
+  
+containers:
+  app:                              # Container reference key
+    service:
+      http:                         # Service reference key
+        ingress:
+          pathPrefix: "/bar"        # Path prefix (optional)
+
+ingress:
+  example.com:                      # Domainname
+    subdomainOverride: "foo"        # Override the subdomain (optional)
+    tlsSecretOverride: ""           # TLS secret override (optional)
+```
+
 ## Storage and volume mapping
-You can add additional (or overwrite existing) volume mounts to the containers in a pod by adding the following lines to `values.yaml`:
+![Static Badge](https://img.shields.io/badge/Version-%3E%3D_1.1.0-white?style=flat&labelColor=lightgray)
+
+You can add or overwrite volume mounts to the containers in a pod by adding the following lines to `values.yaml`:
 ```yaml
 containers:
   app:                              # Container reference key
     volumeMounts:
       backups:                      # Volume reference key
-        "apps/my-app": "/backup"    # Format: "[source relative path]": "<container mount path>"
+        "apps/myapp": "/backup"     # Format: "[source relative path]": "<container mount path>"
 
 volumes:
   backups:                          # Volume reference key
