@@ -2,7 +2,7 @@
     <img src="https://cdn.jsdelivr.net/gh/selfhst/icons/svg/jellyfin.svg" height="120" alt="Jellyfin logo">
 </p>
 
-# jellyfin
+# Jellyfin
 *Jellyfin is a free and open-source media server and suite of multimedia applications designed to organize, manage, and share digital media files across various platforms with full hardware transcoding support.*
 
 **Homepage:** <https://jellyfin.org>
