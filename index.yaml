@@ -219,6 +219,24 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/huntarr-1.2.0/huntarr-1.2.0.tgz
     version: 1.2.0
+  jellyfin:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-27T14:53:54.592237406Z"
+    description: Jellyfin is a free and open-source media server and suite of multimedia
+      applications designed to organize, manage, and share digital media files across
+      various platforms with full hardware transcoding support.
+    digest: 21ab35cfcc1bc5ffb5c1e1234d08d5510e7cad3e5427f4d9cab9bb4a9e66dc3e
+    home: https://jellyfin.org
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/jellyfin.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: jellyfin
+    type: application
+    urls:
+    - https://github.com/ByKaj/helm/releases/download/jellyfin-1.2.0/jellyfin-1.2.0.tgz
+    version: 1.2.0
   jellyseerr:
   - apiVersion: v2
     appVersion: latest
@@ -782,4 +800,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/whisparr-1.1.0/whisparr-1.1.0.tgz
     version: 1.1.0
-generated: "2025-05-24T20:18:46.329307536Z"
+generated: "2025-05-27T14:53:54.592309063Z"
