@@ -1,0 +1,11 @@
+apiVersion: v2
+name: plex
+version: 1.2.0
+description: Plex is a comprehensive entertainment platform that allows users to stream movies, TV shows, and music, while also offering free ad-supported content and the ability to organize and stream personal media collections from their own servers.
+type: application
+home: https://plex.tv
+maintainers:
+  - name: ByKaj
+    url: https://github.com/bykaj
+icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/plex.svg
+appVersion: latest

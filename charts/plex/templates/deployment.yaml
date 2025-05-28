@@ -1,0 +1,230 @@
+# ------------------------------
+# -- {{ include "app.name" $ | title }} Deployment
+# ------------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "app.fullname" . }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  strategy:
+    type: RollingUpdate
+    {{- if (gt (int .Values.replicaCount) 1) }}
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    {{- end }}
+  selector:
+    matchLabels:
+      {{- include "app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "app.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "app.serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- $initEnabled := false -}}
+      {{- range $containerKey, $containerValues := .Values.containers }}
+        {{- if not $initEnabled }}
+          {{- if $containerValues.init.enabled }}
+            {{- $initEnabled = true }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+      dnsPolicy: ClusterFirst
+      enableServiceLinks: true
+      {{- if $initEnabled }}
+      initContainers:
+        {{- range $containerKey, $containerValues := .Values.containers }}
+        {{- if $containerValues.init.enabled }}
+        - name: {{ $.Chart.Name }}-{{ $containerKey }}
+          {{- with $containerValues.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ $containerValues.image.repository }}:{{ $containerValues.image.tag | default $.Chart.AppVersion }}"
+          imagePullPolicy: {{ $containerValues.image.pullPolicy }}
+          restartPolicy: {{ $containerValues.init.restartPolicy }}
+          {{- with $containerValues.args }}
+          args:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}       
+          {{- if coalesce $containerValues.secretUse $containerValues.envUse $containerValues.secret $containerValues.env }}
+          envFrom:
+            {{- if $containerValues.secretUse }}
+            - secretRef:
+                name: {{ include "app.fullname" $ }}-{{ $containerValues.secretUse }}-secret
+            {{- else if $containerValues.secret }}
+            - secretRef:
+                name: {{ include "app.fullname" $ }}-{{ $containerKey }}-secret
+            {{- end }}
+            {{- if $containerValues.envUse }}
+            - configMapRef:
+                name: {{ include "app.fullname" $ }}-{{ $containerValues.envUse }}-env
+            {{- else if $containerValues.env }}
+            - configMapRef:
+                name: {{ include "app.fullname" $ }}-{{ $containerKey }}-env
+            {{- end }}
+          {{- end }}
+          {{- with $containerValues.service }}
+          ports:
+            {{- range $key, $value := . }}
+            - name: {{ $key }}
+              containerPort: {{ $value.port }}
+              protocol: {{ $value.protocol }}
+            {{- end }}
+          {{- end }}
+          {{- with $containerValues.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $containerValues.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $containerValues.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if $containerValues.volumeMounts }}
+          volumeMounts:
+          {{- range $key, $volume := $containerValues.volumeMounts }}
+          {{- range $subPath, $mountPath := $volume }}
+            - name: {{ $key }}
+              mountPath: {{ tpl $mountPath $ }}
+              {{- $subPath := tpl $subPath $ -}}
+              {{- if $subPath }}
+              {{- if eq (substr 0 1 $subPath) "/" }}
+                {{- $subPath = substr 1 -1 $subPath }}
+              {{- end }}
+              subPath: {{ $subPath }}
+              {{- end }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
+        {{- end }}
+        {{- end }}
+      {{- end }}
+      containers:
+        {{- range $containerKey, $containerValues := .Values.containers }}
+        {{- if not $containerValues.init.enabled }}
+        - name: {{ $.Chart.Name }}-{{ $containerKey }}
+          {{- with $containerValues.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ $containerValues.image.repository }}:{{ $containerValues.image.tag | default $.Chart.AppVersion }}"
+          imagePullPolicy: {{ $containerValues.image.pullPolicy }}
+          {{- with $containerValues.args }}
+          args:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}  
+          {{- if coalesce $containerValues.secretUse $containerValues.envUse $containerValues.secret $containerValues.env }}
+          envFrom:
+            {{- if $containerValues.secretUse }}
+            - secretRef:
+                name: {{ include "app.fullname" $ }}-{{ $containerValues.secretUse }}-secret
+            {{- else if $containerValues.secret }}
+            - secretRef:
+                name: {{ include "app.fullname" $ }}-{{ $containerKey }}-secret
+            {{- end }}
+            {{- if $containerValues.envUse }}
+            - configMapRef:
+                name: {{ include "app.fullname" $ }}-{{ $containerValues.envUse }}-env
+            {{- else if $containerValues.env }}
+            - configMapRef:
+                name: {{ include "app.fullname" $ }}-{{ $containerKey }}-env
+            {{- end }}
+          {{- end }}
+          {{- with $containerValues.service }}
+          ports:
+            {{- range $key, $value := . }}
+            - name: {{ $key }}
+              containerPort: {{ $value.port }}
+              protocol: {{ $value.protocol }}
+            {{- end }}
+          {{- end }}
+          {{- with $containerValues.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $containerValues.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $containerValues.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if $containerValues.volumeMounts }}
+          volumeMounts:
+          {{- range $key, $volume := $containerValues.volumeMounts }}
+          {{- range $subPath, $mountPath := $volume }}
+            - name: {{ $key }}
+              mountPath: {{ tpl $mountPath $ }}
+              {{- $subPath := tpl $subPath $ -}}
+              {{- if $subPath }}
+              {{- if eq (substr 0 1 $subPath) "/" }}
+                {{- $subPath = substr 1 -1 $subPath }}
+              {{- end }}
+              subPath: {{ $subPath }}
+              {{- end }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
+        {{- end }}
+        {{- end }}
+      hostname: {{ include "app.fullname" $ }}
+      {{- if .Values.volumes }}
+      volumes:
+      {{- range $key, $volume := .Values.volumes }}
+        - name: {{ $key }}
+          {{- if (eq $volume.className "longhorn") }}
+          persistentVolumeClaim:
+              claimName: {{ printf "%s-%s-lgn-pvc" (include "app.fullname" $) $key }}
+          {{- else if (eq $volume.className "smb") }}
+          persistentVolumeClaim:
+              claimName: {{ printf "%s-%s-smb-pvc" (include "app.fullname" $) $key }}
+          {{- else if (eq $volume.className "configmap") }}
+          configMap:
+            name: {{ printf "%s-%s" (include "app.fullname" $) $key }}
+          {{- else if (eq $volume.className "local") }}
+          emptyDir: {}
+          {{- end }}
+      {{- end }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.dnsConfig }}
+      dnsConfig:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

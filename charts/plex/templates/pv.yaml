@@ -1,0 +1,54 @@
+{{- if .Values.volumes -}}
+{{- range $key, $volume := .Values.volumes }}
+{{- if or (eq $volume.className "longhorn") (eq $volume.className "smb") -}}
+{{- $name := "" -}}
+{{- if (eq $volume.className "longhorn") -}}
+  {{- $name = (cat (include "app.fullname" $) "-" $key "-lgn" | nospace) -}}
+{{- else if (eq $volume.className "smb") -}}
+  {{- $name = (cat (include "app.fullname" $) "-" $key "-smb" | nospace) -}}
+{{- end -}}
+---
+# ------------------------------
+# -- {{ include "app.name" $ | title }} PV
+# -- Name: {{ $name }}-pv
+# ------------------------------
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ $name }}-pv
+  labels:
+    {{- include "app.labels" $ | nindent 4 }}
+spec:
+  capacity:
+    storage: {{ tpl $volume.storage $ }}
+  volumeMode: Filesystem
+  {{- with $volume.accessModes }}
+  accessModes:
+    {{- range . }}
+    - {{ . }}
+    {{- end }}
+  {{- end }}
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: {{ $volume.className }}
+  {{- if (eq $volume.className "longhorn") }}
+  csi:
+    driver: driver.longhorn.io
+    readOnly: false
+    fsType: ext4
+    volumeAttributes:
+      numberOfReplicas: {{ tpl $volume.numberOfReplicas $ | quote }}
+      staleReplicaTimeout: "2880"
+  {{- else if (eq $volume.className "smb") }}
+  csi:
+    driver: smb.csi.k8s.io
+    readOnly: false
+    volumeAttributes:
+      source: {{ tpl $volume.source $ }}
+    nodeStageSecretRef:
+      name: {{ required ".credentials.smb.secret not found: SMB credentials secret not defined" $.Values.credentials.smb.secret }}
+      namespace: {{ required ".credentials.smb.namespace not found: SMB credentials namespace not defined" $.Values.credentials.smb.namespace }}
+  {{- end }}
+    volumeHandle: {{ include "app.name" $ }}-{{ $key }}
+{{ end -}}
+{{- end -}}
+{{- end -}}

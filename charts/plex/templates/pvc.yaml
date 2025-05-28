@@ -1,0 +1,35 @@
+{{- if .Values.volumes -}}
+{{- range $key, $volume := .Values.volumes }}
+{{- if or (eq $volume.className "longhorn") (eq $volume.className "smb") -}}
+{{- $name := "" -}}
+{{- if (eq $volume.className "longhorn") -}}
+  {{- $name = (cat (include "app.fullname" $) "-" $key "-lgn" | nospace) -}}
+{{- else if (eq $volume.className "smb") -}}
+  {{- $name = (cat (include "app.fullname" $) "-" $key "-smb" | nospace) -}}
+{{- end -}}
+---
+# ------------------------------
+# -- {{ include "app.name" $ | title }} PVC
+# -- Name: {{ $name }}-pvc
+# ------------------------------
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $name }}-pvc
+  labels:
+    {{- include "app.labels" $ | nindent 4 }}
+spec:
+  {{- with $volume.accessModes }}
+  accessModes:
+    {{- range . }}
+    - {{ . }}
+    {{- end }}
+  {{- end }}
+  storageClassName: {{ $volume.className }}
+  resources:
+    requests:
+      storage: {{ tpl $volume.storage $  }}
+  volumeName: {{ $name }}-pv
+{{ end -}}
+{{- end -}}
+{{- end -}}

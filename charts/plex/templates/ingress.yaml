@@ -1,0 +1,128 @@
+{{- $appFullname := (include "app.fullname" .) -}}
+{{- $appName := (include "app.name" .) -}}
+{{- $appLabels := (include "app.labels" .) -}}
+{{- if .Values.ingress.enabled -}}
+  {{- if .Values.global.domainname -}}
+    {{- $_ := set .Values.ingress.domains .Values.global.domainname (dict "subdomainOverride" "" "tlsSecretOverride" "") -}}
+  {{- end -}}
+  {{- $serviceName := "" -}}
+  {{- $middlewares := .Values.ingress.middlewares -}}
+  {{- $totalDomains := (len .Values.ingress.domains) -}}
+  {{- range $domain, $domainOptions := .Values.ingress.domains -}}
+    {{- if (not $domainOptions.routers) -}}
+      {{- $_ := set $domainOptions "routers" dict -}}
+    {{- end -}}
+    {{- $enabledServices := (include "app.lib.getServices" $) | fromYaml -}}
+    {{- range $serviceType, $serviceTypeOptions := $enabledServices -}}
+      {{- $serviceName := $serviceTypeOptions.serviceName -}}
+      {{- range $service, $serviceOptions := $serviceTypeOptions.services -}}
+        {{- if $serviceOptions.ingress.enabled -}}
+          {{- $kind := "" -}}
+          {{- $matchRule := "" -}}
+          {{- if (eq $serviceOptions.ingress.scheme "tcp") -}}
+            {{- $kind = "IngressRouteTCP" -}}
+            {{- $matchRule = "HostSNI" -}}
+          {{- else if (eq $serviceOptions.ingress.scheme "udp") -}}
+            {{- $kind = "IngressRouteUDP" -}}
+            {{- $matchRule = "Host" -}}
+          {{- else if (eq $serviceOptions.ingress.scheme "http") -}}
+            {{- $kind = "IngressRoute" -}}
+            {{- $matchRule = "Host" -}}
+          {{- else -}}
+            {{- $kind = "IngressRoute" -}}
+            {{- $matchRule = "Host" -}}
+          {{- end -}}
+          {{- if not (hasKey $domainOptions.routers $kind) -}}
+            {{- $_ := set $domainOptions.routers $kind dict -}}
+            {{- $_ := set (get $domainOptions.routers $kind) "services" dict -}}
+          {{- end -}}
+          {{- $_ := set (get $domainOptions.routers $kind) "entryPoint" (get $.Values.ingress.entryPoints $serviceOptions.ingress.scheme) -}}
+          {{- $_ := set (get $domainOptions.routers $kind) "serviceName" $serviceName -}}
+          {{- $_ := set (get $domainOptions.routers $kind).services $service (dict "matchRule" $matchRule "port" $serviceOptions.port "pathPrefix" $serviceOptions.ingress.pathPrefix) -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $pos := 0 -}}
+  {{- range $domain, $domainOptions := $.Values.ingress.domains -}}
+    {{- $pos = (add 1 $pos) -}}
+    {{- range $kind, $routerOptions := $domainOptions.routers -}}
+      {{- $routerKind := "" -}}
+      {{- if (eq $kind "IngressRouteTCP") -}}
+        {{- $routerKind = "tcp" -}}
+      {{- else if (eq $kind "IngressRouteUDP") -}}
+        {{- $routerKind = "udp" -}}
+      {{- else -}}
+        {{- $routerKind = "http" -}}
+      {{- end -}}
+      {{- $ingressName := "" -}}
+      {{- if (eq $totalDomains 1) -}}
+        {{- $ingressName = printf "%s-%s-rtr" $appFullname $routerKind -}}
+      {{- else -}}
+        {{- $ingressName = printf "%s-%s-rtr-%d" $appFullname $routerKind $pos -}}
+      {{- end -}}
+      {{- $hostname := printf "%s.%s" (coalesce $domainOptions.subdomainOverride $appFullname) $domain }}
+---
+# ------------------------------
+# -- {{ $appName | title }} {{ $kind }}
+# -- Name: {{ $ingressName }}
+# ------------------------------
+apiVersion: traefik.io/v1alpha1
+kind: {{ $kind }}
+metadata:
+  name: {{ $ingressName }}
+  labels:
+    {{- $appLabels | nindent 4 }}
+  annotations:
+    kubernetes.io/ingress.class: traefik-external
+    {{- with $.Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  {{- with $routerOptions.entryPoint }}
+  entryPoints:
+    - {{ . }}
+  {{- end }}
+  routes:
+  {{- $serviceName := $routerOptions.serviceName -}}
+  {{- if (eq $kind "IngressRouteUDP") }}
+    - services:
+    {{- range $service, $serviceOptions := $routerOptions.services }}
+        - name: {{ $serviceName }}
+          port: {{ $serviceOptions.port }}
+    {{- end }}
+  {{- else }}
+    {{- range $service, $serviceOptions := $routerOptions.services }}
+      {{- if ($serviceOptions.pathPrefix) }}
+    - match: {{ printf "%s(`%s`) && PathPrefix(`%s`)" $serviceOptions.matchRule $hostname $serviceOptions.pathPrefix }}
+      {{- else }}
+    - match: {{ printf "%s(`%s`)" $serviceOptions.matchRule $hostname }}
+      {{- end }}
+      services:
+        - name: {{ $serviceName }}
+          port: {{ $serviceOptions.port }}
+          {{- if (gt (int $.Values.replicaCount) 1) }}
+          sticky:
+            cookie:
+              httpOnly: true
+              secure: true
+              sameSite: none
+          {{- end }}
+      {{- with $middlewares }}
+      middlewares:
+        {{- range . }}
+        - name: {{ . }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+    {{- if $domainOptions.tlsSecretOverride }}
+  tls:
+    secretName: {{ $domainOptions.tlsSecretOverride }}
+    {{- else }}
+  tls:
+    secretName: {{ $domain | replace "." "-" }}-tls
+    {{- end }}
+  {{- end }}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
