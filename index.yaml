@@ -222,6 +222,23 @@ entries:
   jellyfin:
   - apiVersion: v2
     appVersion: latest
+    created: "2025-05-28T11:14:26.319330706Z"
+    description: Jellyfin is a free and open-source media server and suite of multimedia
+      applications designed to organize, manage, and share digital media files across
+      various platforms with full hardware transcoding support.
+    digest: 92b36e73c75da455331ff1549bfcfc9294d1ee5042f5bba521355a57e871bb5b
+    home: https://jellyfin.org
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/jellyfin.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/ByKaj
+    name: jellyfin
+    type: application
+    urls:
+    - https://github.com/bykaj/helm/releases/download/jellyfin-1.2.1/jellyfin-1.2.1.tgz
+    version: 1.2.1
+  - apiVersion: v2
+    appVersion: latest
     created: "2025-05-27T14:53:54.592237406Z"
     description: Jellyfin is a free and open-source media server and suite of multimedia
       applications designed to organize, manage, and share digital media files across
@@ -459,6 +476,25 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/paperless-ngx-1.1.0/paperless-ngx-1.1.0.tgz
     version: 1.1.0
+  plex:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-05-28T11:14:26.503419665Z"
+    description: Plex is a comprehensive entertainment platform that allows users
+      to stream movies, TV shows, and music, while also offering free ad-supported
+      content and the ability to organize and stream personal media collections from
+      their own servers.
+    digest: 31842f663e1302bf7d708b2e454fab73bd30967ab1e53aa45ee617968b08c7e7
+    home: https://plex.tv
+    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/plex.svg
+    maintainers:
+    - name: ByKaj
+      url: https://github.com/bykaj
+    name: plex
+    type: application
+    urls:
+    - https://github.com/bykaj/helm/releases/download/plex-1.2.0/plex-1.2.0.tgz
+    version: 1.2.0
   prowlarr:
   - apiVersion: v2
     appVersion: latest
@@ -800,4 +836,4 @@ entries:
     urls:
     - https://github.com/ByKaj/helm/releases/download/whisparr-1.1.0/whisparr-1.1.0.tgz
     version: 1.1.0
-generated: "2025-05-27T14:53:54.592309063Z"
+generated: "2025-05-28T11:14:26.503500927Z"
